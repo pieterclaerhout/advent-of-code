@@ -122,7 +122,6 @@ func (c *Command) part2() {
 
 		fifo = fifo[1:]
 	}
-	// slog.Info("Part 2", slog.Any("result", highestCount*secondHighest))
 }
 
 func (c *Command) parse() *HeightMap {
