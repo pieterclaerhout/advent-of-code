@@ -8,6 +8,7 @@ import (
 	"github.com/pieterclaerhout/advent-of-code/day03"
 	"github.com/pieterclaerhout/advent-of-code/day04"
 	"github.com/pieterclaerhout/advent-of-code/day05"
+	"github.com/pieterclaerhout/advent-of-code/day06"
 	"golang.org/x/exp/slog"
 )
 
@@ -30,6 +31,7 @@ func main() {
 		3: day03.Command{},
 		4: day04.Command{},
 		5: day05.Command{},
+		6: day06.Command{},
 	}
 
 	command, exists := commands[*day]
