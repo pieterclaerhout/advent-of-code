@@ -14,12 +14,12 @@ var input string
 type Command struct {
 }
 
-func (c Command) Execute() {
+func (c *Command) Execute() {
 	c.part1()
 	c.part2()
 }
 
-func (c Command) part1() {
+func (c *Command) part1() {
 	forest := c.parse()
 
 	maxLeft := make([]rune, len(forest))
@@ -72,7 +72,7 @@ func (c Command) part1() {
 	slog.Info("Part 1", slog.Any("isVisbleCount", len(isVisible)))
 }
 
-func (c Command) part2() {
+func (c *Command) part2() {
 	forest := c.parse()
 
 	var highestScore int
@@ -92,7 +92,7 @@ func (c Command) part2() {
 	slog.Info("Part 2", slog.Any("highestScore", highestScore))
 }
 
-func (c Command) parse() Forest {
+func (c *Command) parse() Forest {
 	var forest Forest
 
 	reader := strings.NewReader(input)

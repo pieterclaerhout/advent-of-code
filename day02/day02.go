@@ -14,12 +14,12 @@ var input string
 type Command struct {
 }
 
-func (c Command) Execute() {
+func (c *Command) Execute() {
 	c.part1()
 	c.part2()
 }
 
-func (c Command) part1() {
+func (c *Command) part1() {
 	scores := map[string]int{
 		"B X": 1,
 		"C Y": 2,
@@ -42,7 +42,7 @@ func (c Command) part1() {
 	slog.Info("Total score 1", slog.Any("score", totalScore))
 }
 
-func (c Command) part2() {
+func (c *Command) part2() {
 	scores := map[string]int{
 		"B X": 1,
 		"C X": 2,
@@ -65,7 +65,7 @@ func (c Command) part2() {
 	slog.Info("Total score 2", slog.Any("score", totalScore))
 }
 
-func (c Command) parse() []string {
+func (c *Command) parse() []string {
 	result := []string{}
 
 	reader := strings.NewReader(input)

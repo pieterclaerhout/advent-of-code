@@ -15,17 +15,17 @@ var input string
 type Command struct {
 }
 
-func (c Command) Execute() {
+func (c *Command) Execute() {
 	c.part1()
 	c.part2()
 }
 
-func (c Command) part1() {
+func (c *Command) part1() {
 	fs := c.parse()
 	slog.Info("Part 1", slog.Any("totalSize", fs.SumLessThan100000()))
 }
 
-func (c Command) part2() {
+func (c *Command) part2() {
 	fs := c.parse()
 
 	freeSpace := 70000000 - fs.Size
@@ -35,7 +35,7 @@ func (c Command) part2() {
 	slog.Info("Part 2", slog.Any("result", result))
 }
 
-func (c Command) parse() Node {
+func (c *Command) parse() Node {
 	fs := NewDir("/", nil)
 	fsContext := &fs
 

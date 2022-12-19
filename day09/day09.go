@@ -15,12 +15,12 @@ var input string
 type Command struct {
 }
 
-func (c Command) Execute() {
+func (c *Command) Execute() {
 	c.part1()
 	c.part2()
 }
 
-func (c Command) part1() {
+func (c *Command) part1() {
 	visitedByTail := make(map[Point]bool)
 
 	head := Point{X: 0, Y: 0}
@@ -49,7 +49,7 @@ func (c Command) part1() {
 	slog.Info("Part 1", slog.Any("visitedByTail", len(visitedByTail)))
 }
 
-func (c Command) part2() {
+func (c *Command) part2() {
 	visitedByTail := make(map[Point]bool)
 	knots := make([]Point, 10)
 
@@ -79,7 +79,7 @@ func (c Command) part2() {
 	slog.Info("Part 2", slog.Any("visitedByTail", len(visitedByTail)))
 }
 
-func (c Command) parse() []Motion {
+func (c *Command) parse() []Motion {
 	var list []Motion
 
 	reader := strings.NewReader(input)

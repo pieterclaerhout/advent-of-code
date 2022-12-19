@@ -15,12 +15,12 @@ var input string
 type Command struct {
 }
 
-func (c Command) Execute() {
+func (c *Command) Execute() {
 	c.part1()
 	c.part2()
 }
 
-func (c Command) part1() {
+func (c *Command) part1() {
 	stacks := make([]stack, 9)
 
 	reader := strings.NewReader(input)
@@ -55,7 +55,7 @@ func (c Command) part1() {
 	slog.Info("Part 1", slog.Any("result", result))
 }
 
-func (c Command) part2() {
+func (c *Command) part2() {
 	stacks := make([]stack, 9)
 
 	reader := strings.NewReader(input)

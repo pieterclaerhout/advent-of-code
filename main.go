@@ -12,6 +12,7 @@ import (
 	"github.com/pieterclaerhout/advent-of-code/day07"
 	"github.com/pieterclaerhout/advent-of-code/day08"
 	"github.com/pieterclaerhout/advent-of-code/day09"
+	"github.com/pieterclaerhout/advent-of-code/day10"
 	"golang.org/x/exp/slog"
 )
 
@@ -29,15 +30,16 @@ func main() {
 	slog.Info("Executing", slog.Any("day", *day))
 
 	commands := []Command{
-		day01.Command{},
-		day02.Command{},
-		day03.Command{},
-		day04.Command{},
-		day05.Command{},
-		day06.Command{},
-		day07.Command{},
-		day08.Command{},
-		day09.Command{},
+		&day01.Command{},
+		&day02.Command{},
+		&day03.Command{},
+		&day04.Command{},
+		&day05.Command{},
+		&day06.Command{},
+		&day07.Command{},
+		&day08.Command{},
+		&day09.Command{},
+		&day10.Command{},
 	}
 
 	if *day > len(commands) {

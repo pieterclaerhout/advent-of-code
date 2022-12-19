@@ -14,12 +14,12 @@ var input string
 type Command struct {
 }
 
-func (c Command) Execute() {
+func (c *Command) Execute() {
 	c.part1()
 	c.part2()
 }
 
-func (c Command) part1() {
+func (c *Command) part1() {
 	ruckSacks := c.parse()
 
 	var score int
@@ -31,7 +31,7 @@ func (c Command) part1() {
 	slog.Info("Part 1", slog.Any("score", score))
 }
 
-func (c Command) part2() {
+func (c *Command) part2() {
 
 	groups := [][]RuckSack{}
 
@@ -54,7 +54,7 @@ func (c Command) part2() {
 	slog.Info("Part 2", slog.Any("score", score))
 }
 
-func (c Command) parse() []RuckSack {
+func (c *Command) parse() []RuckSack {
 	result := []RuckSack{}
 
 	reader := strings.NewReader(input)
