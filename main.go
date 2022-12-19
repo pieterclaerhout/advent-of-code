@@ -9,6 +9,7 @@ import (
 	"github.com/pieterclaerhout/advent-of-code/day04"
 	"github.com/pieterclaerhout/advent-of-code/day05"
 	"github.com/pieterclaerhout/advent-of-code/day06"
+	"github.com/pieterclaerhout/advent-of-code/day07"
 	"golang.org/x/exp/slog"
 )
 
@@ -25,20 +26,21 @@ func main() {
 
 	slog.Info("Executing", slog.Any("day", *day))
 
-	commands := map[int]Command{
-		1: day01.Command{},
-		2: day02.Command{},
-		3: day03.Command{},
-		4: day04.Command{},
-		5: day05.Command{},
-		6: day06.Command{},
+	commands := []Command{
+		day01.Command{},
+		day02.Command{},
+		day03.Command{},
+		day04.Command{},
+		day05.Command{},
+		day06.Command{},
+		day07.Command{},
 	}
 
-	command, exists := commands[*day]
-	if !exists {
+	if *day > len(commands) {
 		slog.Error("Command not found", nil, slog.Any("day", *day))
 		return
 	}
 
+	command := commands[*day-1]
 	command.Execute()
 }
