@@ -52,8 +52,6 @@ func (c *Command) part2() {
 			c.RegisterX += operation.Value
 		}
 	}
-
-	// slog.Info("Part 1", slog.Any("finalValue", c.FinalValue))
 }
 
 func (c *Command) parse() []Operation {
