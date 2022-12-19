@@ -5,6 +5,7 @@ import (
 
 	"github.com/pieterclaerhout/advent-of-code/day01"
 	"github.com/pieterclaerhout/advent-of-code/day02"
+	"github.com/pieterclaerhout/advent-of-code/day03"
 	"golang.org/x/exp/slog"
 )
 
@@ -21,13 +22,14 @@ func main() {
 
 	slog.Info("Executing", slog.Any("day", *day))
 
-	var command Command
-	switch *day {
-	case 1:
-		command = day01.Command{}
-	case 2:
-		command = day02.Command{}
-	default:
+	commands := map[int]Command{
+		1: day01.Command{},
+		2: day02.Command{},
+		3: day03.Command{},
+	}
+
+	command, exists := commands[*day]
+	if !exists {
 		slog.Error("Command not found", nil, slog.Any("day", *day))
 		return
 	}
