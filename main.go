@@ -4,6 +4,7 @@ import (
 	"flag"
 
 	"github.com/pieterclaerhout/advent-of-code/day01"
+	"github.com/pieterclaerhout/advent-of-code/day02"
 	"golang.org/x/exp/slog"
 )
 
@@ -24,9 +25,9 @@ func main() {
 	switch *day {
 	case 1:
 		command = day01.Command{}
-	}
-
-	if command == nil {
+	case 2:
+		command = day02.Command{}
+	default:
 		slog.Error("Command not found", nil, slog.Any("day", *day))
 		return
 	}
