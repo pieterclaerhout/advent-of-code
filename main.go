@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/pieterclaerhout/advent-of-code/year2022/day01"
+	"github.com/pieterclaerhout/advent-of-code/day01"
 	"golang.org/x/exp/slog"
 )
 
