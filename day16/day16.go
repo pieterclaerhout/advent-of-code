@@ -32,7 +32,7 @@ func (c *Command) part1() {
 		ValvesFlow:       valves.FlowRates,
 	}
 
-	slog.Info("Part 1", slog.Any("result", cache.DFS([]string{"AA"}, "")))
+	slog.Info("Part 1", slog.Any("result", cache.Dfs([]string{"AA"}, "")))
 }
 
 func (c *Command) part2() {
@@ -47,7 +47,7 @@ func (c *Command) part2() {
 		ValvesFlow:       valves.FlowRates,
 	}
 
-	cache.DFS([]string{"AA"}, "")
+	cache.Dfs([]string{"AA"}, "")
 
 	slog.Info("Part 2", slog.Any("result", cache.MaxExclusivePair()))
 }

@@ -12,7 +12,7 @@ type Cache struct {
 	ValvesFlow       map[string]int
 }
 
-func (c *Cache) DFS(path []string, valveState string) int {
+func (c *Cache) Dfs(path []string, valveState string) int {
 	currValve := path[len(path)-1]
 
 	remaining, totalPressure := c.calculateTotalPressure(path)
@@ -32,7 +32,7 @@ func (c *Cache) DFS(path []string, valveState string) int {
 
 		newPath := append(path, nextValve)
 		newState := c.pathToState(newPath)
-		pressure := c.DFS(newPath, newState)
+		pressure := c.Dfs(newPath, newState)
 		if pressure > maxPressure {
 			maxPressure = pressure
 		}
