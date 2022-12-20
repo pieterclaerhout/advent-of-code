@@ -8,16 +8,16 @@ func (s *stack) push(r ...rune) {
 	s.elements = append(s.elements, r...)
 }
 
-func (s *stack) pop() (r rune) {
-	r = s.elements[len(s.elements)-1]
+func (s *stack) pop() rune {
+	r := s.elements[len(s.elements)-1]
 	s.elements = s.elements[:len(s.elements)-1]
-	return
+	return r
 }
 
-func (s *stack) popN(n int) (r []rune) {
-	r = s.elements[len(s.elements)-n : len(s.elements)]
+func (s *stack) popN(n int) []rune {
+	r := s.elements[len(s.elements)-n : len(s.elements)]
 	s.elements = s.elements[:len(s.elements)-n]
-	return
+	return r
 }
 
 func (s *stack) addToBottom(r rune) {
