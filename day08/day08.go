@@ -25,7 +25,7 @@ func (c *Command) part1() {
 	maxLeft := make([]rune, len(forest))
 	maxRight := make([]rune, len(forest))
 
-	isVisible := make(map[Point]bool)
+	isVisible := map[Point]bool{}
 	for i := 0; i < len(forest); i++ {
 		for j := 0; j < len(forest[0]); j++ {
 			if j == 0 {

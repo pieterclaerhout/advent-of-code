@@ -29,10 +29,10 @@ func (c *Command) part1() {
 	distances := valves.ValvesDistances(nonEmpty)
 
 	cache := Cache{
-		totalMinutes:     30,
-		stateMaxPressure: map[string]int{},
-		distances:        distances,
-		valvesFlow:       valves.FlowRates,
+		TotalMinutes:     30,
+		StateMaxPressure: map[string]int{},
+		Distances:        distances,
+		ValvesFlow:       valves.FlowRates,
 	}
 
 	slog.Info("Part 1", slog.Any("result", cache.DFS([]string{"AA"}, "")))
@@ -44,10 +44,10 @@ func (c *Command) part2() {
 	distances := valves.ValvesDistances(nonEmpty)
 
 	cache := Cache{
-		totalMinutes:     26,
-		stateMaxPressure: map[string]int{},
-		distances:        distances,
-		valvesFlow:       valves.FlowRates,
+		TotalMinutes:     26,
+		StateMaxPressure: map[string]int{},
+		Distances:        distances,
+		ValvesFlow:       valves.FlowRates,
 	}
 
 	cache.DFS([]string{"AA"}, "")

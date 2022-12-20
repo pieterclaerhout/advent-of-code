@@ -50,8 +50,8 @@ func (c *Command) part1() {
 }
 
 func (c *Command) part2() {
-	visitedByTail := make(map[Point]bool)
-	knots := make([]Point, 10)
+	visitedByTail := map[Point]bool{}
+	knots := [10]Point{}
 
 	visitedByTail[knots[9]] = true
 

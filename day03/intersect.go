@@ -1,7 +1,7 @@
 package day03
 
 func intersect(a []string, b []string) []string {
-	m := make(map[string]bool)
+	m := map[string]bool{}
 	for _, item := range a {
 		m[item] = true
 	}

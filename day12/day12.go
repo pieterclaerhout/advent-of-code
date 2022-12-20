@@ -126,7 +126,7 @@ func (c *Command) part2() {
 
 func (c *Command) parse() *HeightMap {
 	heightmap := &HeightMap{
-		Data: make([][]rune, 0),
+		Data: [][]rune{},
 	}
 
 	reader := strings.NewReader(input)

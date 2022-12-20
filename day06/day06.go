@@ -27,7 +27,7 @@ func (c *Command) part2() {
 
 func (c *Command) firstStartOfPackage(differentCharactersNeeded int) int {
 	for i := range input {
-		charactersSet := make(map[byte]bool)
+		charactersSet := map[byte]bool{}
 		for j := 0; j < differentCharactersNeeded; j++ {
 			charactersSet[input[i+j]] = true
 		}

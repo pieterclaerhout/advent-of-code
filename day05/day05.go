@@ -21,7 +21,7 @@ func (c *Command) Execute() {
 }
 
 func (c *Command) part1() {
-	stacks := make([]stack, 9)
+	stacks := [9]stack{}
 
 	reader := strings.NewReader(input)
 	sc := bufio.NewScanner(reader)
@@ -56,7 +56,7 @@ func (c *Command) part1() {
 }
 
 func (c *Command) part2() {
-	stacks := make([]stack, 9)
+	stacks := [9]stack{}
 
 	reader := strings.NewReader(input)
 	sc := bufio.NewScanner(reader)
