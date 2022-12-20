@@ -14,9 +14,6 @@ import (
 var input string
 
 type Command struct {
-	RegisterX   int
-	CycleNumber int
-	FinalValue  int
 }
 
 func (c *Command) Execute() {
