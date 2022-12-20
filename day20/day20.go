@@ -21,27 +21,27 @@ func (c *Command) Execute() {
 }
 
 func (c *Command) part1() {
-	input := c.parse()
-	front := NewList(input)
-	Mix(front, len(input))
-	sum := GroveCoordinates(front)
+	input, indexes := c.parse()
 
-	slog.Info("Part 1", slog.Any("result", sum))
+	mixedInput, _ := Mix(input, indexes, 1)
+
+	slog.Info("Part 1", slog.Any("result", Sum(mixedInput, 1)))
 }
 
 func (c *Command) part2() {
-	input := c.parse()
-	front := NewList(input)
-	ApplyDecryptKey(front, 811589153)
-	for i := 0; i < 10; i++ {
-		Mix(front, len(input))
+	const decryptionKey = 811589153
+
+	input, indexes := c.parse()
+
+	for r := 0; r < 10; r++ {
+		input, indexes = Mix(input, indexes, decryptionKey)
 	}
 
-	sum := GroveCoordinates(front)
-	slog.Info("Part 2", slog.Any("result", sum))
+	slog.Info("Part 2", slog.Any("result", Sum(input, decryptionKey)))
+
 }
 
-func (c *Command) parse() []int {
+func (c *Command) parse() ([]int, []int) {
 	numbers := []int{}
 
 	reader := strings.NewReader(input)
@@ -50,8 +50,12 @@ func (c *Command) parse() []int {
 	for sc.Scan() {
 		number, _ := strconv.Atoi(sc.Text())
 		numbers = append(numbers, number)
-
 	}
 
-	return numbers
+	indexes := make([]int, len(numbers))
+	for i := range numbers {
+		indexes[i] = i
+	}
+
+	return numbers, indexes
 }

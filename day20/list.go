@@ -1,102 +1,52 @@
 package day20
 
-type Node struct {
-	Value         int
-	Moved         bool
-	Left          *Node
-	Right         *Node
-	OriginalIndex int
-}
+func Mix(input []int, indices []int, multiplicator int) ([]int, []int) {
+	copiedInput := make([]int, len(input))
+	copy(copiedInput, input)
 
-func NewList(in []int) *Node {
-	var front, prev *Node
-	for i := 0; i < len(in); i++ {
-		if i == 0 {
-			front = &Node{Value: in[i], OriginalIndex: i}
-			prev = front
-			continue
-		}
+	copiedIndices := make([]int, len(indices))
+	copy(copiedIndices, indices)
 
-		n := &Node{Value: in[i], Left: prev, OriginalIndex: i}
-		prev.Right = n
-		prev = n
-	}
-	front.Left = prev
-	prev.Right = front
-	return front
-}
-
-func Mix(front *Node, count int) {
-	cur := front
-	ptr := front
-	idx := 0
-	for idx < count {
-		tomove := cur.Value
-		dir := 1
-		if tomove < 0 {
-			dir = -1
-			tomove *= -1
-		}
-
-		tomove = tomove % (count - 1)
-		// this also works.
-		// for tomove/count != 0 {
-		// 	tomove = tomove/count + tomove%count
-		// }
-
-		ptr = cur.Right
-		cur.Moved = true
-
-		for j := 0; j < tomove; j++ {
-			tmpleft := cur.Left
-			tmpright := cur.Right
-			tmpright.Left = tmpleft
-			tmpleft.Right = tmpright
-			if dir == 1 {
-				cur.Right = tmpright.Right
-				cur.Left = tmpright
-				tmpright.Right = cur
-				cur.Right.Left = cur
-
-			} else {
-				cur.Left = tmpleft.Left
-				cur.Right = tmpleft
-				tmpleft.Left = cur
-				cur.Left.Right = cur
+	for i := 0; i < len(copiedInput); i++ {
+		from := 0
+		for from < len(copiedIndices) {
+			if copiedIndices[from] == i {
+				break
 			}
+			from += 1
 		}
 
-		idx++
-		for ptr.OriginalIndex != idx && idx < count {
-			ptr = ptr.Right
+		to := from + (copiedInput[from]*multiplicator)%(len(copiedInput)-1)
+		for to <= 0 {
+			to += len(copiedInput) - 1
 		}
-		cur = ptr
+		for to >= len(copiedInput) {
+			to -= len(copiedInput) - 1
+		}
+
+		n := copiedInput[from]
+		nidx := copiedIndices[from]
+		if to > from {
+			copy(copiedInput[from:], copiedInput[from+1:to+1])
+			copy(copiedIndices[from:], copiedIndices[from+1:to+1])
+		} else {
+			copy(copiedInput[to+1:], copiedInput[to:from])
+			copy(copiedIndices[to+1:], copiedIndices[to:from])
+		}
+		copiedInput[to] = n
+		copiedIndices[to] = nidx
 	}
+
+	return copiedInput, copiedIndices
 }
 
-func GroveCoordinates(front *Node) int {
-	gc := []int{}
-
-	cur := front
-	for cur.Value != 0 {
-		cur = cur.Right
-	}
-
-	for len(gc) < 3 {
-		for i := 0; i < 1000; i++ {
-			cur = cur.Right
+func Sum(mixedInput []int, decryptionKey int) int {
+	for j := 0; j < len(mixedInput); j++ {
+		if mixedInput[j] == 0 {
+			return mixedInput[(j+1000)%len(mixedInput)]*decryptionKey +
+				mixedInput[(j+2000)%len(mixedInput)]*decryptionKey +
+				mixedInput[(j+3000)%len(mixedInput)]*decryptionKey
 		}
-		gc = append(gc, cur.Value)
 	}
-	return gc[0] + gc[1] + gc[2]
-}
-
-func ApplyDecryptKey(front *Node, k int) {
-	cur := front
-	first := true
-	for cur != front || first {
-		first = false
-		cur.Value *= k
-		cur = cur.Right
-	}
+	return 0
 }
