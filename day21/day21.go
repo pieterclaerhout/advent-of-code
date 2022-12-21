@@ -40,7 +40,9 @@ func (c *Command) parse() Monkeys {
 
 	for sc.Scan() {
 		lineParts := strings.Split(sc.Text(), ": ")
-		monkeys[lineParts[0]] = lineParts[1]
+		if len(lineParts) == 2 {
+			monkeys[lineParts[0]] = lineParts[1]
+		}
 	}
 
 	return monkeys

@@ -18,22 +18,24 @@ var mapping = map[string]func(int, int) int{
 func (monkeys Monkeys) Solve(key string) int {
 	expr := monkeys[key]
 
-	if v, err := strconv.Atoi(expr); err == nil {
-		return v
+	s := strings.Fields(expr)
+
+	if len(s) == 3 {
+		return mapping[s[1]](
+			monkeys.Solve(s[0]),
+			monkeys.Solve(s[2]),
+		)
 	}
 
-	s := strings.Fields(expr)
-	left := monkeys.Solve(s[0])
-	oper := s[1]
-	right := monkeys.Solve(s[2])
-
-	return mapping[oper](left, right)
+	v, _ := strconv.Atoi(expr)
+	return v
 }
 
 func (monkeys Monkeys) RootEquality() int {
 	monkeys["humn"] = "0"
 
 	s := strings.Fields(monkeys["root"])
+
 	if monkeys.Solve(s[0]) < monkeys.Solve(s[2]) {
 		s[0], s[2] = s[2], s[0]
 	}
