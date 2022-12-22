@@ -1,10 +1,5 @@
 import { readFileSync } from "../utils/readfile.ts";
 
-type Input = {
-  Start : number;
-  End : number,
-}
-
 type ParsedInput = [[number, number], [number, number]][];
 
 const parseInput = (path: string): ParsedInput => {
