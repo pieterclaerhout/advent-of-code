@@ -4,7 +4,6 @@ const parseInput = (path: string): string[] => {
   return readFileSync(path).split('');
 }
 
-
 const findUniqueCharsPosition = (chars: string[], setSize: number) => {
 	const lastChars: string[] = [];
 	for (let i = 0; i < chars.length; i++) {
