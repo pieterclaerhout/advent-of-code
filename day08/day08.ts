@@ -4,7 +4,6 @@ const parseInput = (path: string): number[][] => {
   return readFileSync(path)
     .split('\n')
     .map((v) => v.split('').map((h) => +h));
-
 }
 
 const part1 = (parsedInput: number[][]) => {
@@ -41,7 +40,7 @@ const part1 = (parsedInput: number[][]) => {
 		testVisibility(x, parsedInput.length - 1, 0, -1)
 	}
 
-  console.log("Part 1", visible.size);
+  console.log("Part 1:",  visible.size);
 }
 
 const part2 = (parsedInput: number[][]) => {

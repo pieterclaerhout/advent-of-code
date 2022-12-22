@@ -20,12 +20,12 @@ const findUniqueCharsPosition = (chars: string[], setSize: number) => {
 
 const part1 = (parsedInput: string[]) => {
   const result = findUniqueCharsPosition(parsedInput, 4);
-  console.log("Part 1", result)
+  console.log("Part 1:",  result)
 }
 
 const part2 = (parsedInput: string[]) => {
   const result = findUniqueCharsPosition(parsedInput, 14);
-  console.log("Part 2", result);
+  console.log("Part 2:",  result);
 }
 
 const run = () => {

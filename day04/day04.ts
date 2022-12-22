@@ -18,7 +18,7 @@ const part1 = (parsedInput: ParsedInput) => {
     })
     .length;
 
-  console.log("Part 1", result)
+  console.log("Part 1:",  result)
 }
 
 const part2 = (parsedInput: ParsedInput) => {
@@ -34,7 +34,7 @@ const part2 = (parsedInput: ParsedInput) => {
     })
     .length;
 
-  console.log("Part 2", result);
+  console.log("Part 2:",  result);
 }
 
 const run = () => {

@@ -45,7 +45,7 @@ const part1 = (parsedInput: Map<string, number>) => {
     }
   }
 
-  console.log("Part 1", totalSizeOfDirsUnder100000);
+  console.log("Part 1:",  totalSizeOfDirsUnder100000);
 }
 
 const part2 = (parsedInput: Map<string, number>) => {
@@ -58,7 +58,7 @@ const part2 = (parsedInput: Map<string, number>) => {
     }
   }
 
-  console.log("Part 2", closestSize);
+  console.log("Part 2:",  closestSize);
 }
 
 const run = () => {

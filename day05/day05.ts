@@ -38,7 +38,7 @@ const part1 = (parsedInput: string[][]) => {
 
   const result = stacks.map((s) => s.pop()).join('');
 
-  console.log("Part 1", result)
+  console.log("Part 1:",  result)
 }
 
 const part2 = (parsedInput: string[][]) => {
@@ -75,7 +75,7 @@ const part2 = (parsedInput: string[][]) => {
 
   const result = stacks.map((s) => s.pop()).join('');
 
-  console.log("Part 2", result);
+  console.log("Part 2:",  result);
 }
 
 const run = () => {

@@ -20,7 +20,7 @@ const part1 = (parsedInput: string[]) => {
     prioritySum += items.indexOf(commonItem!)
   }
 
-  console.log("Part 1", prioritySum)
+  console.log("Part 1:",  prioritySum)
 }
 
 const part2 = (parsedInput: string[]) => {
@@ -32,7 +32,7 @@ const part2 = (parsedInput: string[]) => {
     prioritySum += items.indexOf(badgeItem!);
   }
 
-  console.log("Part 2", prioritySum);
+  console.log("Part 2:",  prioritySum);
 }
 
 const run = () => {
