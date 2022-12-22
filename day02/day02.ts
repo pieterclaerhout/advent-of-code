@@ -23,7 +23,7 @@ const part1 = (parsedInput: Round[]) => {
   console.log("Part 1:", score);
 }
 
-const part2 = (parseInput: Round[]) => {
+const part2 = (parsedInput: Round[]) => {
   const theirMoves = {
 		A: { X: 3, Y: 1, Z: 2 },
 		B: { X: 1, Y: 2, Z: 3 },
@@ -37,7 +37,7 @@ const part2 = (parseInput: Round[]) => {
 	}
 
   let score = 0
-	for (const round of parseInput) {
+	for (const round of parsedInput) {
 		score += theirMoves[round[0]][round[1]] + myMoveScores[round[1]]
 	}
 
