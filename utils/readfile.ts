@@ -1,5 +1,5 @@
 export function readFileSync(path: string): string {
   return Deno.readTextFileSync(path)
-    .trim()
+    .trimEnd()
     .replaceAll(/\r?\n/g, "\n");
 }
