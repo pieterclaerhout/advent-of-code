@@ -3,3 +3,7 @@ export function readFileSync(path: string): string {
     .trimEnd()
     .replaceAll(/\r?\n/g, "\n");
 }
+
+export function readAndSplitFileSync(path: string, separator = "\n"): string[] {
+  return readFileSync(path).split(separator);
+}
