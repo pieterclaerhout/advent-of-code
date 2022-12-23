@@ -1,15 +1,15 @@
 import { readFileSync } from "../utils/readfile.ts";
 
-type Operation = (["addx", number] | ["noop"]);
+type Operation = ["addx", number] | ["noop"];
 
 const parseInput = (path: string): Operation[] => {
   return readFileSync(path)
-    .split('\n')
+    .split("\n")
     .map((v) => {
-      const [instr, val] = v.split(' ')
-      return [instr, +val] as ['addx', number] | ['noop']
+      const [instr, val] = v.split(" ");
+      return [instr, +val] as ["addx", number] | ["noop"];
     });
-}
+};
 
 // const clamp = (value: number, min: number, max: number) =>
 // 	Math.min(Math.max(value, min), max);
@@ -65,7 +65,7 @@ const part1 = (parsedInput: Operation[]) => {
 
   for (const [instr, val] of parsedInput) {
     cycle++;
-    if (instr === 'noop') {
+    if (instr === "noop") {
       continue;
     }
     checkStrength();
@@ -76,7 +76,7 @@ const part1 = (parsedInput: Operation[]) => {
   }
 
   console.log("Part 1:", signalSum);
-}
+};
 
 const part2 = (parsedInput: Operation[]) => {
   let cycle = 1;
@@ -87,13 +87,13 @@ const part2 = (parsedInput: Operation[]) => {
     const pos = cycle - 1;
     const row = Math.floor(pos / 40);
     const drawn = Math.abs((pos % 40) - x) <= 1;
-    screen[row].push(drawn ? '#' : '.');
-  }
+    screen[row].push(drawn ? "#" : ".");
+  };
 
   for (const [instr, val] of parsedInput) {
     draw();
-    cycle += 1
-    if (instr === 'noop') {
+    cycle += 1;
+    if (instr === "noop") {
       continue;
     }
     draw();
@@ -101,16 +101,16 @@ const part2 = (parsedInput: Operation[]) => {
     x += val;
   }
 
-  const result = screen.map((row) => row.join('')).join('\n');
+  const result = screen.map((row) => row.join("")).join("\n");
   console.log("Part 2:\n" + result);
-}
+};
 
 const run = () => {
-  const inputPath = new URL('input.txt', import.meta.url).pathname;
+  const inputPath = new URL("input.txt", import.meta.url).pathname;
   const parsedInput = parseInput(inputPath);
 
   part1(parsedInput);
   part2(parsedInput);
-}
+};
 
 export default run;

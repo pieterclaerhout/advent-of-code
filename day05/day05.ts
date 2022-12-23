@@ -2,9 +2,9 @@ import { readFileSync } from "../utils/readfile.ts";
 
 const parseInput = (path: string): string[][] => {
   return readFileSync(path)
-    .split('\n\n')
-    .map((p) => p.split('\n'));
-}
+    .split("\n\n")
+    .map((p) => p.split("\n"));
+};
 
 const part1 = (parsedInput: string[][]) => {
   const [input, moves] = parsedInput;
@@ -36,10 +36,10 @@ const part1 = (parsedInput: string[][]) => {
     }
   });
 
-  const result = stacks.map((s) => s.pop()).join('');
+  const result = stacks.map((s) => s.pop()).join("");
 
-  console.log("Part 1:",  result)
-}
+  console.log("Part 1:", result);
+};
 
 const part2 = (parsedInput: string[][]) => {
   const [input, moves] = parsedInput;
@@ -73,17 +73,17 @@ const part2 = (parsedInput: string[][]) => {
     moving.reverse().forEach((m) => stacks[to - 1].push(m));
   });
 
-  const result = stacks.map((s) => s.pop()).join('');
+  const result = stacks.map((s) => s.pop()).join("");
 
-  console.log("Part 2:",  result);
-}
+  console.log("Part 2:", result);
+};
 
 const run = () => {
-  const inputPath = new URL('input.txt', import.meta.url).pathname;
+  const inputPath = new URL("input.txt", import.meta.url).pathname;
   const parsedInput = parseInput(inputPath);
 
   part1(parsedInput);
   part2(parsedInput);
-}
+};
 
 export default run;
