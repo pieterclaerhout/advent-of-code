@@ -6,13 +6,20 @@ if (import.meta.main) {
     }
 
     const dayAsString = String(day).padStart(2, "0");
-    const command =
-      (await import(`./day${dayAsString}/day${dayAsString}.ts`)).default;
+
+    const command = (await import(
+      `./day${dayAsString}/day${dayAsString}.ts`
+    )).default;
     if (!command) {
       throw new Error(`Unknown day: ${day}`);
     }
 
-    command();
+    const inputPath = new URL(
+      `./day${dayAsString}/input.txt`,
+      import.meta.url,
+    ).pathname;
+
+    command(inputPath);
   } catch (e) {
     console.log(e);
     Deno.exit(1);

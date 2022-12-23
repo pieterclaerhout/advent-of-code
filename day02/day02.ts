@@ -1,55 +1,38 @@
-import { readFileSync } from "../utils/readfile.ts";
+import { readAndSplitFileSync } from "../utils/readfile.ts";
 
-type Round = ["A" | "B" | "C", "X" | "Y" | "Z"];
+type ScoreMap = Record<string, number>;
 
-const parseInput = (path: string): Round[] => {
-  return readFileSync(path)
-    .split("\n")
-    .map((v) => v.split(" ") as Round);
+const scoresPart1: ScoreMap = {
+  "B X": 1,
+  "C Y": 2,
+  "A Z": 3,
+  "A X": 4,
+  "B Y": 5,
+  "C Z": 6,
+  "C X": 7,
+  "A Y": 8,
+  "B Z": 9,
 };
 
-const part1 = (parsedInput: Round[]) => {
-  const myMoves = {
-    X: { value: 1, A: 3, B: 0, C: 6 },
-    Y: { value: 2, A: 6, B: 3, C: 0 },
-    Z: { value: 3, A: 0, B: 6, C: 3 },
-  };
-
-  let score = 0;
-  for (const round of parsedInput) {
-    score += myMoves[round[1]].value + myMoves[round[1]][round[0]];
-  }
-
-  console.log("Part 1:", score);
+const scoresPart2: ScoreMap = {
+  "B X": 1,
+  "C X": 2,
+  "A X": 3,
+  "A Y": 4,
+  "B Y": 5,
+  "C Y": 6,
+  "C Z": 7,
+  "A Z": 8,
+  "B Z": 9,
 };
 
-const part2 = (parsedInput: Round[]) => {
-  const theirMoves = {
-    A: { X: 3, Y: 1, Z: 2 },
-    B: { X: 1, Y: 2, Z: 3 },
-    C: { X: 2, Y: 3, Z: 1 },
-  };
-
-  const myMoveScores = {
-    X: 0,
-    Y: 3,
-    Z: 6,
-  };
-
-  let score = 0;
-  for (const round of parsedInput) {
-    score += theirMoves[round[0]][round[1]] + myMoveScores[round[1]];
-  }
-
-  console.log("Part 2:", score);
+const calculateScore = (inputPath: string, scores: ScoreMap): number => {
+  return readAndSplitFileSync(inputPath, "\n")
+    .map((line) => scores[line])
+    .reduce((a, c) => a + c);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-  const parsedInput = parseInput(inputPath);
-
-  part1(parsedInput);
-  part2(parsedInput);
-};
-
-export default run;
+export default function (inputPath: string) {
+  console.log("Part 1:", calculateScore(inputPath, scoresPart1));
+  console.log("Part 2:", calculateScore(inputPath, scoresPart2));
+}

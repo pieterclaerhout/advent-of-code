@@ -6,23 +6,12 @@ const parseInput = (path: string): number[] => {
     .sort((a, b) => b - a);
 };
 
-const part1 = (parsedInput: number[]) => {
-  const highest = parsedInput[0];
-  console.log("Part 1:", highest);
-};
-
-const part2 = (parsedInput: number[]) => {
-  const top3 = parsedInput.slice(0, 3)
-    .reduce((p, c) => p + c);
-  console.log("Part 2:", top3);
-};
-
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
+export default function (inputPath: string) {
   const caloriesPerElf = parseInput(inputPath);
 
-  part1(caloriesPerElf);
-  part2(caloriesPerElf);
-};
+  const highest = caloriesPerElf[0];
+  console.log("Part 1:", highest);
 
-export default run;
+  const top3 = caloriesPerElf.slice(0, 3).reduce((p, c) => p + c);
+  console.log("Part 2:", top3);
+}
