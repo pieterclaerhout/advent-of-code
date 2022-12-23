@@ -1,257 +1,180 @@
 import { readFileSync } from "../utils/readfile.ts";
 
+const regex =
+  /Each ore robot costs (?<ore_ore_cost>[0-9]+) ore\. Each clay robot costs (?<clay_ore_cost>[0-9]+) ore\. Each obsidian robot costs (?<obsidian_ore_cost>[0-9]+) ore and (?<obsidian_clay_cost>[0-9]+) clay\. Each geode robot costs (?<geode_ore_cost>[0-9]+) ore and (?<geode_obsidian_cost>[0-9]+) obsidian\.$/m;
+
 type Resource = "ore" | "clay" | "obsidian" | "geode";
+type Blueprint = Record<Resource, Map<Resource, number>>;
 
-type Costs = {
-  ore: number;
-  clay: number;
-  obsidian: number;
+type ParsedInput = {
+  blueprint: Blueprint;
+  max_costs: Map<Resource, number>;
 };
 
-type Blueprint = {
-  id: number;
-  costs: Record<Resource, Costs>;
-  maxOreCost: number;
-};
-
-const evalCache: [number, string][][] = [];
-
-let MAX_MINUTES = 24;
-
-const parseInput = (path: string): Blueprint[] =>
+const parseInput = (path: string): ParsedInput[] =>
   readFileSync(path)
-    .split("\n")
-    .map((line) => {
-      const id = +line.match(/Blueprint (\d+):/)![1];
-      const ore = {
-        ore: +line.match(/ore robot costs (\d+) ore/)![1],
-        clay: 0,
-        obsidian: 0,
-      };
-      const clay = {
-        ore: +line.match(/clay robot costs (\d+) ore/)![1],
-        clay: 0,
-        obsidian: 0,
-      };
-      const [, oreObs, clayObs] = line.match(
-        /obsidian robot costs (\d+) ore and (\d+) clay/,
-      )!;
-      const obsidian = {
-        ore: +oreObs,
-        clay: +clayObs,
-        obsidian: 0,
-      };
-      const [, oreGeo, obsGeo] = line.match(
-        /geode robot costs (\d+) ore and (\d+) obsidian/,
-      )!;
-      const geode = {
-        ore: +oreGeo,
-        clay: 0,
-        obsidian: +obsGeo,
-      };
+    .replaceAll("\r", "").split("\n")
+    .map((line): Blueprint => {
+      const {
+        ore_ore_cost,
+        clay_ore_cost,
+        obsidian_ore_cost,
+        obsidian_clay_cost,
+        geode_ore_cost,
+        geode_obsidian_cost,
+      } = line.match(regex)!.groups!;
+
       return {
-        id,
-        costs: { ore, clay, obsidian, geode },
-        maxOreCost: Math.max(ore.ore, clay.ore, obsidian.ore, geode.ore),
+        ore: new Map(
+          Object.entries({ ore: parseInt(ore_ore_cost) }) as [
+            Resource,
+            number,
+          ][],
+        ),
+        clay: new Map(
+          Object.entries({ ore: parseInt(clay_ore_cost) }) as [
+            Resource,
+            number,
+          ][],
+        ),
+        obsidian: new Map(
+          Object.entries({
+            ore: parseInt(obsidian_ore_cost),
+            clay: parseInt(obsidian_clay_cost),
+          }) as [Resource, number][],
+        ),
+        geode: new Map(
+          Object.entries({
+            ore: parseInt(geode_ore_cost),
+            obsidian: parseInt(geode_obsidian_cost),
+          }) as [Resource, number][],
+        ),
+      };
+    }).map((blueprint) => {
+      const max_costs = new Map<Resource, number>();
+      for (const costs of Object.values(blueprint)) {
+        for (const [resource_type, amount] of costs) {
+          if (
+            !max_costs.has(resource_type) ||
+            max_costs.get(resource_type)! < amount
+          ) {
+            max_costs.set(resource_type, amount);
+          }
+        }
+      }
+
+      return {
+        blueprint: blueprint,
+        max_costs: max_costs,
       };
     });
 
-const produce = (
-  bots: Record<Resource, number>,
-  store: Record<Resource, number>,
-): void => {
-  store.ore += bots.ore;
-  store.clay += bots.clay;
-  store.obsidian += bots.obsidian;
-  store.geode += bots.geode;
-};
+const cache = new Map<string, number>();
 
-const evaluate = (
-  info: Blueprint,
-  minute = 1,
-  store: Record<Resource, number> = {
+const dfs = (
+  input: ParsedInput[],
+  time_remaining: number,
+  blueprintID: number,
+  robots: Record<Resource, number> = { ore: 1, clay: 0, obsidian: 0, geode: 0 },
+  resources: Record<Resource, number> = {
     ore: 0,
     clay: 0,
     obsidian: 0,
     geode: 0,
   },
-  bots: Record<Resource, number> = {
-    ore: 1,
-    clay: 0,
-    obsidian: 0,
-    geode: 0,
-  },
-  building: Resource | null = null,
-  buildOrder = "",
-): [number, string] => {
-  if (minute === 1) {
-    const minWait = Math.min(info.costs.ore.ore, info.costs.clay.ore);
-    store.ore += minWait;
-    return evaluate(info, minute + minWait, store);
+): number => {
+  if (time_remaining < 0) {
+    throw "?";
+  }
+  if (time_remaining === 0) {
+    return resources.geode;
+  }
+  const cache_key = JSON.stringify([
+    time_remaining,
+    blueprintID,
+    robots,
+    resources,
+  ]);
+  const cached_result = cache.get(cache_key);
+  if (typeof cached_result === "number") {
+    return cached_result;
   }
 
-  if (minute === MAX_MINUTES) {
-    produce(bots, store);
-    return [store.geode, buildOrder];
-  }
+  const { blueprint, max_costs } = input[blueprintID];
+  let max_geodes = resources.geode + robots.geode * time_remaining;
+  robots:
+  for (const robot_type of ["clay", "ore", "obsidian", "geode"] as Resource[]) {
+    if (robots[robot_type] >= max_costs.get(robot_type)!) {
+      continue robots;
+    }
 
-  const cache1Index = minute -
-    1 +
-    (bots.ore << 4) +
-    (bots.clay << 9) +
-    (bots.obsidian << 14) +
-    (bots.geode << 19);
-  const cache1 = evalCache[cache1Index];
-  const cache2Index = store.ore + (store.clay << 8) + (store.obsidian << 16) +
-    (store.geode << 23);
+    const new_resources: Record<Resource, number> = { ...resources };
 
-  if (cache1) {
-    const cache2 = cache1[cache2Index];
-    if (cache2) {
-      return cache2;
-    }
-  }
+    let time_to_make_robot = 0;
+    for (const [resource, total_needed] of blueprint[robot_type]) {
+      new_resources[resource] -= total_needed;
+      const more_needed = total_needed - resources[resource];
+      const time_to_get_more = Math.ceil(more_needed / robots[resource]);
+      if (time_to_get_more >= time_remaining) {
+        continue robots;
+      }
 
-  if (building) {
-    produce(bots, store);
-    bots[building as Resource]++;
-    buildOrder += " " + building;
-    const result = evaluate(info, minute + 1, store, bots, null, buildOrder);
-    const newCache1Index = minute -
-      1 +
-      (bots.ore << 4) +
-      (bots.clay << 9) +
-      (bots.obsidian << 14) +
-      (bots.geode << 19);
-    if (!evalCache[newCache1Index]) {
-      evalCache[newCache1Index] = [];
+      time_to_make_robot = Math.max(time_to_make_robot, time_to_get_more);
     }
-    evalCache[newCache1Index][cache2Index] = result;
-    return result;
-  }
 
-  let best = [0, ""];
-  if (minute === MAX_MINUTES - 1 && bots.geode === 0) {
-    return [0, buildOrder];
-  }
+    time_to_make_robot += 1;
 
-  if (
-    bots.ore >= info.costs.geode.ore &&
-    bots.obsidian >= info.costs.geode.obsidian
-  ) {
-    for (let m = minute; m <= MAX_MINUTES; m++) {
-      produce(bots, store);
-      bots.geode++;
-      buildOrder += " geode";
-    }
-    return [store.geode, buildOrder];
-  }
+    const new_time_remaining = time_remaining - time_to_make_robot;
 
-  for (const nextBot in info.costs) {
-    if (nextBot === "ore" && bots.ore === info.maxOreCost) {
-      continue;
+    for (const resource of Object.keys(new_resources) as Resource[]) {
+      new_resources[resource] += robots[resource] * time_to_make_robot;
+
+      if (resource !== "geode") {
+        const most_spend = new_time_remaining * max_costs.get(resource)!;
+        if (new_resources[resource] > most_spend) {
+          new_resources[resource] = most_spend;
+        }
+      }
     }
-    if (nextBot === "clay" && bots.clay === info.costs.obsidian.clay) {
-      continue;
-    }
-    if (
-      nextBot === "obsidian" &&
-      bots.clay === 0 &&
-      bots.obsidian === info.costs.geode.obsidian
-    ) {
-      continue;
-    }
-    if (nextBot === "geode" && (bots.clay === 0 || bots.obsidian === 0)) {
-      continue;
-    }
-    const nextBotCosts = Object.entries(
-      info.costs[nextBot as keyof Blueprint["costs"]],
+
+    const new_robots = { ...robots };
+    new_robots[robot_type] += 1;
+
+    const result = dfs(
+      input,
+      time_remaining - time_to_make_robot,
+      blueprintID,
+      new_robots,
+      new_resources,
     );
 
-    if (
-      nextBotCosts.some(([resource, amount]) => {
-        return amount > 0 && bots[resource as Resource] === 0;
-      })
-    ) {
-      continue;
+    if (result > max_geodes) {
+      max_geodes = result;
     }
-    const waitMinutes = nextBotCosts.reduce((acc, resource) => {
-      if (resource[1] === 0) {
-        return acc;
-      }
-      const inStore = store[resource[0] as Resource];
-      if (resource[1] <= inStore) {
-        return acc;
-      }
-      const making = bots[resource[0] as Resource];
-      const mins = Math.ceil((resource[1] - inStore) / making);
-      return mins > acc ? mins : acc;
-    }, 0);
+  }
 
-    if (minute + waitMinutes + 1 > MAX_MINUTES) {
-      continue;
-    }
-    if (nextBot !== "geode" && minute + waitMinutes + 1 >= MAX_MINUTES - 1) {
-      continue;
-    }
-    const storeClone = { ...store };
-    for (let i = 0; i < waitMinutes; i++) {
-      produce(bots, storeClone);
-    }
-    for (const [resource, amount] of nextBotCosts) {
-      storeClone[resource as Resource] -= amount;
-    }
-    const result = evaluate(
-      info,
-      minute + waitMinutes,
-      storeClone,
-      { ...bots },
-      nextBot as Resource,
-      buildOrder,
-    );
-    if (result[0] > best[0]) best = result;
-  }
-  if (bots.geode > 0) {
-    const storeClone = { ...store };
-    for (let m = minute; m <= MAX_MINUTES; m++) {
-      produce(bots, storeClone);
-    }
-    if (storeClone.geode > best[0]) {
-      best = [storeClone.geode, buildOrder];
-    }
-  }
-  if (!evalCache[cache1Index]) {
-    evalCache[cache1Index] = [];
-  }
-  evalCache[cache1Index][cache2Index] = best as [number, string];
-  return best as [number, string];
+  cache.set(cache_key, max_geodes);
+  return max_geodes;
 };
 
 const part1 = (path: string) => {
   const input = parseInput(path);
-  MAX_MINUTES = 24;
-  let qualitySum = 0;
-  for (const blueprint of input) {
-    evalCache.length = 0;
-    const [geodes, _buildOrder] = evaluate(blueprint);
-    const quality = geodes * blueprint.id;
-    qualitySum += quality;
-  }
+  const result = input.reduce(
+    (acc, _, i) => acc + dfs(input, 24, i) * (i + 1),
+    0,
+  );
 
-  console.log("Part 1:", qualitySum);
+  console.log("Part 1:", result);
 };
 
 const part2 = (path: string) => {
-  const input = parseInput(path).slice(0, 3);
-  MAX_MINUTES = 32;
-  let geodeProduct = 1;
-  for (const blueprint of input) {
-    evalCache.length = 0;
-    const [geodes, _buildOrder] = evaluate(blueprint);
-    geodeProduct *= geodes;
-  }
+  const input = parseInput(path);
+  const result = input.slice(0, 3).reduce(
+    (acc, _, i) => acc * dfs(input, 32, i),
+    1,
+  );
 
-  console.log("Part 2:", geodeProduct);
+  console.log("Part 2:", result);
 };
 
 const run = () => {
