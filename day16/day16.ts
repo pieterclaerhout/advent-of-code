@@ -1,151 +1,251 @@
 import { readFileSync } from "../utils/readfile.ts";
 
-const regexp =
-  /^Valve (?<id>[A-Z]{2}) has flow rate=(?<flow_rate>[0-9]+); tunnels? leads? to valves? (?<tunnels>(?:[A-Z]{2},? ?)+)$/;
+type ParsedInput = {
+  valveFlowMap: Map<string, number>;
+  tunnelMap: Map<string, string[]>;
+};
 
-const flow_rates: Record<string, number> = {};
-const graph: Record<string, string[]> = {};
-const bit: Record<string, bigint> = {};
-const vertices: string[] = [];
+const parseInput = (path: string): ParsedInput => {
+  const lines = readFileSync(path)
+    .split("\n");
 
-// const part1 = (path: string) => {
-//   const input = parseInput(path);
-//   pathCache.clear();
-//   evalCache.clear();
+  const valves = new Map<string, number>();
+  const tunnels = new Map<string, string[]>();
 
-//   const bestPressure = evaluate(input);
+  lines.forEach((line) => {
+    const valve = line.split(" has ")[0].slice(-2);
+    const flow = Number(line.match(/\d+/)![0]);
+    const tunnel = line
+      .replace(/valve /, "valves ")
+      .split("valves ")[1]
+      .split(", ");
+    valves.set(valve, flow);
+    tunnels.set(valve, tunnel);
+  });
 
-//   console.log("Part 1:", bestPressure);
-// };
+  return {
+    valveFlowMap: valves,
+    tunnelMap: tunnels,
+  };
+};
 
-// const part2 = (path: string) => {
-//   const input = parseInput(path);
-//   pathCache.clear();
-//   evalCache.clear();
+const solvePart1 = (path: string): number => {
+  const { valveFlowMap, tunnelMap } = parseInput(path);
 
-//   const MINUTES = 26;
-//   const ratedValves = [...input]
-//     .filter(([, valve]) => valve.rate > 0)
-//     .map(([name]) => name);
-//   ratedValves.sort();
-//   const ratedValveCount = ratedValves.length;
-//   const maxValvesPerAgent = Math.min(
-//     ratedValveCount,
-//     Math.floor((MINUTES - 1) / 3),
-//   );
-//   const minBanned = Math.max(1, ratedValveCount - maxValvesPerAgent);
-//   const maxBanned = Math.floor(ratedValveCount / 2);
-//   const banLists = new Array(1 << ratedValveCount)
-//     .fill(0)
-//     .map((e1, i) => ratedValves.filter((e2, j) => i & (1 << j)))
-//     .filter((list) => list.length >= minBanned && list.length <= maxBanned);
-//   let bestPressure = 0;
-//   const attemptedBanInverts: Set<string> = new Set();
-//   for (const banList of banLists) {
-//     const banString = banList.join(":");
-//     const banInverse = ratedValves.filter((v) => !banList.includes(v));
-//     if (attemptedBanInverts.has(banString)) continue;
-//     const banInverseString = banInverse.join(":");
-//     const pressure = evaluate(input, MINUTES, banList);
-//     const inversePressure = evaluate(input, MINUTES, banInverse);
-//     const combinedPressure = pressure + inversePressure;
-//     if (combinedPressure > bestPressure) bestPressure = combinedPressure;
-//     attemptedBanInverts.add(banInverseString);
-//   }
+  const distanceMap: Record<string, Record<string, number>> = {};
+  const nonEmptyValves: string[] = [];
 
-//   console.log("Part 2:", bestPressure);
-// };
+  for (const [currentValve, currentFlow] of valveFlowMap) {
+    if (currentValve !== "AA") {
+      if (currentFlow === 0) {
+        continue;
+      } else {
+        nonEmptyValves.push(currentValve);
+      }
+    }
+
+    distanceMap[currentValve] = { [currentValve]: 0, AA: 0 };
+
+    const visitedNodes = new Set<string>(currentValve);
+    const bfsQueue: [string, number][] = [[currentValve, 0]];
+
+    while (bfsQueue.length > 0) {
+      const [currentNode, currentDistance] = bfsQueue.shift()!;
+      const neighboringNodes = tunnelMap.get(currentNode)!;
+
+      for (const currentNeighbor of neighboringNodes) {
+        if (visitedNodes.has(currentNeighbor)) {
+          continue;
+        }
+
+        visitedNodes.add(currentNeighbor);
+
+        if (valveFlowMap.get(currentNeighbor)) {
+          const valveDistances = distanceMap[currentValve];
+          valveDistances[currentNeighbor] = currentDistance + 1;
+        }
+
+        bfsQueue.push([currentNeighbor, currentDistance + 1]);
+      }
+    }
+
+    delete distanceMap[currentValve][currentValve];
+    if (currentValve !== "AA") {
+      delete distanceMap[currentValve].AA;
+    }
+  }
+
+  const valveIndices: Record<string, number> = {};
+
+  nonEmptyValves.forEach((element, index) => {
+    valveIndices[element] = index;
+  });
+
+  const dfsCache: Record<string, number> = {};
+
+  const dfs = (
+    remainingTime: number,
+    valve: string,
+    visitedBitmask: number,
+  ) => {
+    const cacheKey = [remainingTime, valve, visitedBitmask].join(",");
+
+    if (cacheKey in dfsCache) {
+      return dfsCache[cacheKey];
+    }
+
+    let maxFlow = 0;
+    const valveDist = distanceMap[valve];
+    for (const neighbor in valveDist) {
+      const neighborBit = 1 << valveIndices[neighbor];
+
+      if (visitedBitmask & neighborBit) {
+        continue;
+      }
+
+      const neighborRemainingTime = remainingTime - (valveDist[neighbor] + 1);
+
+      if (neighborRemainingTime <= 0) {
+        continue;
+      }
+
+      const neighborFlow = dfs(
+        neighborRemainingTime,
+        neighbor,
+        visitedBitmask | neighborBit,
+      );
+      const neighborTotalFlow = neighborFlow +
+        valveFlowMap.get(neighbor)! * neighborRemainingTime;
+      maxFlow = Math.max(maxFlow, neighborTotalFlow);
+    }
+
+    dfsCache[cacheKey] = maxFlow;
+    return maxFlow;
+  };
+
+  return dfs(30, "AA", 0);
+};
+
+const solvePart2 = (input: string): number => {
+  const { valveFlowMap, tunnelMap } = parseInput(input);
+
+  const distanceMap: Record<string, Record<string, number>> = {};
+  const nonEmptyValves: string[] = [];
+
+  for (const [currentValve, currentFlow] of valveFlowMap) {
+    if (currentValve !== "AA") {
+      if (currentFlow === 0) {
+        continue;
+      } else {
+        nonEmptyValves.push(currentValve);
+      }
+    }
+
+    distanceMap[currentValve] = { [currentValve]: 0, AA: 0 };
+
+    const visitedNodes = new Set<string>(currentValve);
+    const bfsQueue: [string, number][] = [[currentValve, 0]];
+
+    while (bfsQueue.length > 0) {
+      const [currentNode, currentDistance] = bfsQueue.shift()!;
+      const neighboringNodes = tunnelMap.get(currentNode)!;
+
+      for (const currentNeighbor of neighboringNodes) {
+        if (visitedNodes.has(currentNeighbor)) {
+          continue;
+        }
+
+        visitedNodes.add(currentNeighbor);
+
+        if (valveFlowMap.get(currentNeighbor)) {
+          const valveDistances = distanceMap[currentValve];
+          valveDistances[currentNeighbor] = currentDistance + 1;
+        }
+
+        bfsQueue.push([currentNeighbor, currentDistance + 1]);
+      }
+    }
+
+    delete distanceMap[currentValve][currentValve];
+    if (currentValve !== "AA") {
+      delete distanceMap[currentValve].AA;
+    }
+  }
+
+  const valveIndices: Record<string, number> = {};
+
+  nonEmptyValves.forEach((element, index) => {
+    valveIndices[element] = index;
+  });
+
+  const dfsCache: Record<string, number> = {};
+
+  const dfs = (
+    remainingTime: number,
+    valve: string,
+    visitedBitmask: number,
+  ) => {
+    const cacheKey = [remainingTime, valve, visitedBitmask].join(",");
+
+    if (cacheKey in dfsCache) {
+      return dfsCache[cacheKey];
+    }
+
+    let maxFlow = 0;
+    const valveDist = distanceMap[valve];
+    for (const neighbor in valveDist) {
+      const neighborBit = 1 << valveIndices[neighbor];
+
+      if (visitedBitmask & neighborBit) {
+        continue;
+      }
+
+      const neighborRemainingTime = remainingTime - (valveDist[neighbor] + 1);
+
+      if (neighborRemainingTime <= 0) {
+        continue;
+      }
+
+      const neighborFlow = dfs(
+        neighborRemainingTime,
+        neighbor,
+        visitedBitmask | neighborBit,
+      );
+      const neighborTotalFlow = neighborFlow +
+        valveFlowMap.get(neighbor)! * neighborRemainingTime;
+      maxFlow = Math.max(maxFlow, neighborTotalFlow);
+    }
+
+    dfsCache[cacheKey] = maxFlow;
+    return maxFlow;
+  };
+
+  const b = (1 << nonEmptyValves.length) - 1;
+
+  let maxFlow = 0;
+
+  for (let i = 0; i < Math.ceil((b + 1) / 2); i++) {
+    maxFlow = Math.max(maxFlow, dfs(26, "AA", i) + dfs(26, "AA", b ^ i));
+  }
+
+  return maxFlow;
+};
+
+const part1 = (path: string) => {
+  const result = solvePart1(path);
+  console.log("Part 1:", result);
+};
+
+const part2 = (path: string) => {
+  const result = solvePart2(path);
+  console.log("Part 2:", result);
+};
 
 const run = () => {
   const inputPath = new URL("input.txt", import.meta.url).pathname;
 
-  let bit_index = 0n;
-  for (const line of readFileSync(inputPath).split("\n")) {
-    const { id, flow_rate, tunnels } = line.match(regexp)!.groups!;
-    flow_rates[id] = parseInt(flow_rate);
-    graph[id] = tunnels.split(", ");
-    if (flow_rates[id] !== 0) {
-      bit[id] = 1n << bit_index;
-      bit_index++;
-    }
-
-    vertices.push(id);
-  }
-
-  const objectFromKeys = <T>(keys: string[], valueFn: (key: string) => T) =>
-    Object.fromEntries(keys.map((k) => [k, valueFn(k)]));
-
-  let distances: Record<string, Record<string, number>> = objectFromKeys(
-    vertices,
-    () => objectFromKeys(vertices, () => Infinity),
-  );
-
-  for (const v of vertices) {
-    distances[v][v] = 0;
-    for (const u of graph[v]) {
-      distances[u][v] = 1;
-    }
-  }
-
-  for (const k of vertices) {
-    for (const i of vertices) {
-      for (const j of vertices) {
-        if (distances[i][j] > distances[i][k] + distances[k][j]) {
-          distances[i][j] = distances[i][k] + distances[k][j];
-        }
-      }
-    }
-  }
-
-  for (const [from, mapping] of Object.entries(distances)) {
-    for (const to of Object.keys(mapping)) {
-      if (to === from || flow_rates[to] === 0) {
-        delete mapping[to];
-      }
-    }
-  }
-
-  const cache = new Map<string, number>();
-  const dfs = (time: number, valve: string, open: bigint): number => {
-    const cacheKey = `${time},${valve},${open}`;
-    const cachedValue = cache.get(cacheKey);
-    if (cachedValue !== undefined) {
-      return cachedValue;
-    }
-
-    let max_val = 0;
-    for (const [neighbour, dist] of Object.entries(distances[valve])) {
-      if (open & bit[neighbour]) {
-        continue;
-      }
-      const remaining = time - 1 -
-        dist;
-      if (remaining <= 0) {
-        continue;
-      }
-      const newBest = dfs(remaining, neighbour, open | bit[neighbour]);
-      max_val = Math.max(max_val, newBest + flow_rates[neighbour] * remaining);
-    }
-
-    cache.set(cacheKey, max_val);
-    return max_val;
-  };
-
-  console.log("Part 1:", dfs(30, "AA", 0n));
-
-  let max = 0;
-  const max_bitmask = vertices.map((v) => bit[v]).reduce(
-    (a, b) => a | (b ?? 0n),
-    0n,
-  );
-  for (let i = 0n; i < max_bitmask / 2n; i++) {
-    const v = dfs(26, "AA", i) + dfs(26, "AA", max_bitmask ^ i);
-    if (v > max) {
-      max = v;
-    }
-  }
-
-  console.log("Part 2:", max);
+  part1(inputPath);
+  part2(inputPath);
 };
 
 export default run;
