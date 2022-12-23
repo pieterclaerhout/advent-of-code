@@ -1,132 +1,181 @@
 import { readFileSync } from "../utils/readfile.ts";
 
-type NumberMonkey = {
+interface Monkey {
   name: string;
-  type: "number";
-  number: number;
-};
+  leftDependency: string | null;
+  rightDependency: string | null;
+  constant?: number;
+  operation?: (left: number, right: number) => number;
+  solveForLeft?: (result: number, right: number) => number;
+  solveForRight?: (result: number, left: number) => number;
+}
 
-type OperationMonkey = {
-  name: string;
-  type: "operation";
-  operation: "+" | "*" | "/" | "-" | "=";
-  a: string;
-  b: string;
-  number: false | number;
-};
+interface Node {
+  solveForLeft?: (result: number, right: number) => number;
+  solveForRight?: (result: number, left: number) => number;
+  left: Node | number;
+  right: Node | number;
+  isHuman: boolean;
+}
 
-type AnyMonkey = NumberMonkey | OperationMonkey;
-
-const sign = (value: number) => (value >= 0 ? 1 : -1);
-
-const parseInput = (path: string): AnyMonkey[] =>
+const parseInput = (path: string): Monkey[] =>
   readFileSync(path)
     .split("\n")
     .map((line) => {
-      const name = line.match(/^([a-z]+):/)![1];
-      const numberMatch = line.match(/: (\d+)$/);
-      if (numberMatch) {
-        return { name, type: "number", number: +numberMatch[1] };
+      const [name, job] = line.split(": ");
+
+      if (!isNaN(Number(job))) {
+        return {
+          name,
+          leftDependency: null,
+          rightDependency: null,
+          constant: Number(job),
+        };
       }
-      const [a, operation, b] = line.split(":")[1].trim().split(" ");
+
+      const [, leftDependency, operator, rightDependency] =
+        job.match(/([a-z]{4}) ([+*/-]) ([a-z]{4})/) ?? [];
+
+      const operation = (left: number, right: number): number => {
+        switch (operator) {
+          case "+":
+            return left + right;
+          case "-":
+            return left - right;
+          case "*":
+            return left * right;
+          case "/":
+            return left / right;
+        }
+        return NaN;
+      };
+
+      const solveForLeft = (result: number, right: number): number => {
+        switch (operator) {
+          case "+":
+            return result - right;
+          case "-":
+            return result + right;
+          case "*":
+            return result / right;
+          case "/":
+            return result * right;
+        }
+        return NaN;
+      };
+
+      const solveForRight = (result: number, left: number): number => {
+        switch (operator) {
+          case "+":
+            return result - left;
+          case "-":
+            return left - result;
+          case "*":
+            return result / left;
+          case "/":
+            return left / result;
+        }
+        return NaN;
+      };
+
       return {
         name,
-        type: "operation",
+        leftDependency,
+        rightDependency,
         operation,
-        a,
-        b,
-        number: false,
-      } as OperationMonkey;
+        solveForLeft,
+        solveForRight,
+      };
     });
 
-const solveRoot = (monkeyMap: Map<string, AnyMonkey>): AnyMonkey => {
-  const rootMonkey = monkeyMap.get("root") as OperationMonkey;
-  while (true) {
-    for (const [, monkey] of monkeyMap) {
-      if (monkey.type === "number") {
-        continue;
-      }
-      if (monkey.number !== false) {
-        continue;
-      }
-      const a = monkeyMap.get(monkey.a)!;
-      if (a.number === false) {
-        continue;
-      }
-      const b = monkeyMap.get(monkey.b)!;
-      if (b.number === false) {
-        continue;
-      }
-      switch (monkey.operation) {
-        case "+":
-          monkey.number = a.number + b.number;
-          break;
-        case "*":
-          monkey.number = a.number * b.number;
-          break;
-        case "-":
-          monkey.number = a.number - b.number;
-          break;
-        case "/":
-          if (a.number % b.number !== 0) {
-            return rootMonkey;
-          }
-          monkey.number = a.number / b.number;
-          break;
-        case "=":
-          monkey.number = a.number === b.number ? 1 : 0;
-          break;
-      }
-    }
-    if (rootMonkey.number !== false) {
-      return rootMonkey;
-    }
-  }
+const buildMonkeyIndex = (path: string): Map<string, Monkey> => {
+  const monkeys = parseInput(path);
+  return new Map<string, Monkey>(
+    monkeys.map((monkey) => [monkey.name, monkey]),
+  );
 };
 
 const part1 = (path: string) => {
-  const input = parseInput(path);
-  const monkeyMap: Map<string, AnyMonkey> = new Map(
-    input.map((m) => [m.name, m]),
-  );
-  const result = solveRoot(monkeyMap).number;
+  const monkeyIndex = buildMonkeyIndex(path);
 
-  console.log("Part 1:", result);
+  const evaluateMonkey = (monkeyName: string): number => {
+    const monkey = monkeyIndex.get(monkeyName)!;
+
+    if (monkey.leftDependency === null || monkey.rightDependency === null) {
+      return monkey.constant!;
+    }
+
+    return monkey.operation!(
+      evaluateMonkey(monkey.leftDependency),
+      evaluateMonkey(monkey.rightDependency),
+    );
+  };
+
+  console.log("Part 1:", evaluateMonkey("root"));
 };
 
 const part2 = (path: string) => {
-  const input = parseInput(path);
-  let equalDiff = 0;
-  let hStep = 1;
-  let lastGoodH = 0;
-  for (let h = 0; h < Number.MAX_SAFE_INTEGER; h += hStep) {
-    const monkeyMap: Map<string, AnyMonkey> = new Map(
-      input.map((m) => [m.name, { ...m }]),
-    );
-    monkeyMap.get("humn")!.number = h;
-    const rootMonkey = monkeyMap.get("root") as OperationMonkey;
-    rootMonkey.operation = "=";
-    const rootA = monkeyMap.get(rootMonkey.a)!;
-    const rootB = monkeyMap.get(rootMonkey.b)!;
-    solveRoot(monkeyMap);
-    if (rootMonkey.number === 1) {
-      console.log("Part 2:", h);
-      return;
-    } else if (rootMonkey.number === 0) {
-      const prevEqualDiff = equalDiff;
-      equalDiff = (rootA.number as number) - (rootB.number as number);
-      if (prevEqualDiff !== 0) {
-        if (sign(equalDiff) !== sign(prevEqualDiff)) {
-          h = lastGoodH;
-          hStep = Math.max(1, hStep / 100);
-          equalDiff = 0;
-        } else {
-          lastGoodH = h;
-          hStep = Math.min(1e12, hStep * 10);
-        }
+  const monkeyIndex = buildMonkeyIndex(path);
+
+  const buildEvaluationTree = (monkeyName: string): Node | number => {
+    const monkey = monkeyIndex.get(monkeyName)!;
+
+    if (monkeyName === "humn") {
+      return { isHuman: true, left: NaN, right: NaN };
+    }
+
+    if (monkey.leftDependency === null || monkey.rightDependency === null) {
+      return monkey.constant!;
+    }
+
+    const leftSide = buildEvaluationTree(monkey.leftDependency);
+    const rightSide = buildEvaluationTree(monkey.rightDependency);
+
+    if (typeof leftSide === "number" && typeof rightSide === "number") {
+      return monkey.operation!(leftSide, rightSide);
+    }
+
+    return {
+      isHuman: false,
+      left: leftSide,
+      right: rightSide,
+      solveForLeft: monkey.solveForLeft,
+      solveForRight: monkey.solveForRight,
+    };
+  };
+
+  const evaluateHumanConstant = (): number => {
+    const rootMonkey = monkeyIndex.get("root")!;
+    const leftRootTree = buildEvaluationTree(rootMonkey.leftDependency!);
+    const rightRootTree = buildEvaluationTree(rootMonkey.rightDependency!);
+
+    let evaluationTree =
+      (typeof leftRootTree === "number" ? rightRootTree : leftRootTree) as Node;
+    let humanConstant =
+      (typeof leftRootTree === "number"
+        ? leftRootTree
+        : rightRootTree) as number;
+
+    while (!evaluationTree.isHuman) {
+      if (typeof evaluationTree.left === "number") {
+        humanConstant = evaluationTree.solveForRight!(
+          humanConstant,
+          evaluationTree.left as number,
+        );
+        evaluationTree = evaluationTree.right as Node;
+      } else {
+        humanConstant = evaluationTree.solveForLeft!(
+          humanConstant,
+          evaluationTree.right as number,
+        );
+        evaluationTree = evaluationTree.left as Node;
       }
     }
-  }
+
+    return humanConstant;
+  };
+
+  console.log("Part 2:", evaluateHumanConstant());
 };
 
 const run = () => {
