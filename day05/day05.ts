@@ -78,12 +78,9 @@ const part2 = (parsedInput: string[][]) => {
   console.log("Part 2:", result);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
+export default function (inputPath: string) {
   const parsedInput = parseInput(inputPath);
 
   part1(parsedInput);
   part2(parsedInput);
-};
-
-export default run;
+}
