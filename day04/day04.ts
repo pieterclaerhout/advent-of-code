@@ -1,13 +1,5 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 type Range = [number, number];
 type Pair = [Range, Range];
-
-const parseInput = (path: string): Pair[] => {
-  return readFileSync(path)
-    .split("\n")
-    .map((v) => v.split(",").map((r) => r.split("-").map((s) => +s)) as Pair);
-};
 
 const isContained = (pair: Pair): boolean => {
   const [left, right] = pair;
@@ -39,8 +31,10 @@ const part2 = (parsedInput: Pair[]) => {
   console.log("Part 2:", result);
 };
 
-export default function (inputPath: string) {
-  const parsedInput = parseInput(inputPath);
+export default function (_inputPath: string, rawInput: string) {
+  const parsedInput = rawInput
+    .split("\n")
+    .map((v) => v.split(",").map((r) => r.split("-").map((s) => +s)) as Pair);
 
   part1(parsedInput);
   part2(parsedInput);

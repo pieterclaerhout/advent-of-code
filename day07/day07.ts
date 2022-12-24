@@ -1,7 +1,5 @@
-import { readFileSync } from "../utils/readfile.ts";
-
-const parseInput = (path: string): Map<string, number> => {
-  const inputLines = readFileSync(path)
+const parseInput = (rawInput: string): Map<string, number> => {
+  const inputLines = rawInput
     .split("\n")
     .map((v) => v.split(" "));
 
@@ -61,12 +59,9 @@ const part2 = (parsedInput: Map<string, number>) => {
   console.log("Part 2:", closestSize);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-  const parsedInput = parseInput(inputPath);
+export default function (_inputPath: string, rawInput: string) {
+  const parsedInput = parseInput(rawInput);
 
   part1(parsedInput);
   part2(parsedInput);
-};
-
-export default run;
+}

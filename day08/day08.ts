@@ -1,7 +1,5 @@
-import { readFileSync } from "../utils/readfile.ts";
-
-const parseInput = (path: string): number[][] => {
-  return readFileSync(path)
+const parseInput = (rawInput: string): number[][] => {
+  return rawInput
     .split("\n")
     .map((v) => v.split("").map((h) => +h));
 };
@@ -90,12 +88,9 @@ const part2 = (parsedInput: number[][]) => {
   console.log("Part 2:", bestVisibilityScore);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-  const parsedInput = parseInput(inputPath);
+export default function (_inputPath: string, rawInput: string) {
+  const parsedInput = parseInput(rawInput);
 
   part1(parsedInput);
   part2(parsedInput);
-};
-
-export default run;
+}

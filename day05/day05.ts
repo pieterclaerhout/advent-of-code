@@ -1,11 +1,3 @@
-import { readFileSync } from "../utils/readfile.ts";
-
-const parseInput = (path: string): string[][] => {
-  return readFileSync(path)
-    .split("\n\n")
-    .map((p) => p.split("\n"));
-};
-
 const part1 = (parsedInput: string[][]) => {
   const [input, moves] = parsedInput;
 
@@ -78,8 +70,10 @@ const part2 = (parsedInput: string[][]) => {
   console.log("Part 2:", result);
 };
 
-export default function (inputPath: string) {
-  const parsedInput = parseInput(inputPath);
+export default function (_inputPath: string, rawInput: string) {
+  const parsedInput = rawInput
+    .split("\n\n")
+    .map((p) => p.split("\n"));
 
   part1(parsedInput);
   part2(parsedInput);

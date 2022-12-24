@@ -1,5 +1,3 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 const findUniqueCharsPosition = (chars: string[], setSize: number) => {
   const lastChars: string[] = [];
   for (let i = 0; i < chars.length; i++) {
@@ -14,8 +12,8 @@ const findUniqueCharsPosition = (chars: string[], setSize: number) => {
   throw "failed";
 };
 
-export default function (inputPath: string) {
-  const parsedInput = readFileSync(inputPath).split("");
+export default function (_inputPath: string, rawInput: string) {
+  const parsedInput = rawInput.split("");
 
   console.log("Part 1:", findUniqueCharsPosition(parsedInput, 4));
   console.log("Part 2:", findUniqueCharsPosition(parsedInput, 14));

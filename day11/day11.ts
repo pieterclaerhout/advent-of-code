@@ -41,22 +41,23 @@ const getTestFalse = (monkey: string): number =>
       .replace("If false: throw to monkey", ""),
   );
 
-const getMonkeys = (path: string): Monkey[] => {
-  const sections = readFileSync(path).split("\n\n");
-  return sections.map((monkey: string) => {
-    return {
-      items: getItems(monkey),
-      operation: getOperation(monkey),
-      test: getTest(monkey),
-      testTrue: getTestTrue(monkey),
-      testFalse: getTestFalse(monkey),
-      activity: 0,
-    };
-  });
+const getMonkeys = (rawInput: string): Monkey[] => {
+  return rawInput
+    .split("\n\n")
+    .map((monkey: string) => {
+      return {
+        items: getItems(monkey),
+        operation: getOperation(monkey),
+        test: getTest(monkey),
+        testTrue: getTestTrue(monkey),
+        testFalse: getTestFalse(monkey),
+        activity: 0,
+      };
+    });
 };
 
-const runMonkeyBusiness = (path: string, rounds = FIRST_PART_ROUNDS) => {
-  const monkeys = getMonkeys(path);
+const runMonkeyBusiness = (rawInput: string, rounds = FIRST_PART_ROUNDS) => {
+  const monkeys = getMonkeys(rawInput);
 
   const multiModule = monkeys.map((m) => m.test)
     .reduce((a, b) => a * b, 1);
@@ -89,21 +90,17 @@ const runMonkeyBusiness = (path: string, rounds = FIRST_PART_ROUNDS) => {
     .reduce((a, b) => a * b, 1);
 };
 
-const part1 = (path: string) => {
-  const result = runMonkeyBusiness(path, FIRST_PART_ROUNDS);
+const part1 = (rawInput: string) => {
+  const result = runMonkeyBusiness(rawInput, FIRST_PART_ROUNDS);
   console.log("Part 1:", result);
 };
 
-const part2 = (path: string) => {
-  const result = runMonkeyBusiness(path, SECOND_PART_ROUNDS);
+const part2 = (rawInput: string) => {
+  const result = runMonkeyBusiness(rawInput, SECOND_PART_ROUNDS);
   console.log("Part 2:", result);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

@@ -1,9 +1,7 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 type Operation = ["addx", number] | ["noop"];
 
-const parseInput = (path: string): Operation[] => {
-  return readFileSync(path)
+const parseInput = (rawInput: string): Operation[] => {
+  return rawInput
     .split("\n")
     .map((v) => {
       const [instr, val] = v.split(" ");
@@ -64,12 +62,9 @@ const part2 = (parsedInput: Operation[]) => {
   console.log("Part 2:\n" + result);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-  const parsedInput = parseInput(inputPath);
+export default function (_inputPath: string, rawInput: string) {
+  const parsedInput = parseInput(rawInput);
 
   part1(parsedInput);
   part2(parsedInput);
-};
-
-export default run;
+}

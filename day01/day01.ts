@@ -1,13 +1,12 @@
-import { readAndSplitFileSync } from "../utils/readfile.ts";
-
-const parseInput = (path: string): number[] => {
-  return readAndSplitFileSync(path, "\n\n")
+const parseInput = (rawInput: string): number[] => {
+  return rawInput
+    .split("\n\n")
     .map((chunk) => chunk.split("\n").map((v) => +v).reduce((p, c) => p + c))
     .sort((a, b) => b - a);
 };
 
-export default function (inputPath: string) {
-  const caloriesPerElf = parseInput(inputPath);
+export default function (_inputPath: string, rawInput: string) {
+  const caloriesPerElf = parseInput(rawInput);
 
   const highest = caloriesPerElf[0];
   console.log("Part 1:", highest);

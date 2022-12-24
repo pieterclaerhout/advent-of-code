@@ -1,14 +1,9 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 type StepsWithDirection = ["L" | "R" | "U" | "D", number];
 
-const parseInput = (path: string): StepsWithDirection[] => {
-  return readFileSync(path)
+const parseInput = (rawInput: string): StepsWithDirection[] => {
+  return rawInput
     .split("\n")
-    .map((v) => {
-      const [dir, steps] = v.split(" ");
-      return [dir, +steps] as StepsWithDirection;
-    });
+    .map((v) => v.split(" ") as StepsWithDirection);
 };
 
 const clamp = (value: number, min: number, max: number) =>
@@ -62,12 +57,9 @@ const part2 = (parsedInput: StepsWithDirection[]) => {
   console.log("Part 2:", tailGrids.size);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-  const parsedInput = parseInput(inputPath);
+export default function (_inputPath: string, rawInput: string) {
+  const parsedInput = parseInput(rawInput);
 
   part1(parsedInput);
   part2(parsedInput);
-};
-
-export default run;
+}

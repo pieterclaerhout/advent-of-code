@@ -1,5 +1,3 @@
-import { readAndSplitFileSync } from "../utils/readfile.ts";
-
 type ScoreMap = Record<string, number>;
 
 const scoresPart1: ScoreMap = {
@@ -26,13 +24,14 @@ const scoresPart2: ScoreMap = {
   "B Z": 9,
 };
 
-const calculateScore = (inputPath: string, scores: ScoreMap): number => {
-  return readAndSplitFileSync(inputPath, "\n")
+const calculateScore = (rawInput: string, scores: ScoreMap): number => {
+  return rawInput
+    .split("\n")
     .map((line) => scores[line])
     .reduce((a, c) => a + c);
 };
 
-export default function (inputPath: string) {
-  console.log("Part 1:", calculateScore(inputPath, scoresPart1));
-  console.log("Part 2:", calculateScore(inputPath, scoresPart2));
+export default function (_inputPath: string, rawInput: string) {
+  console.log("Part 1:", calculateScore(rawInput, scoresPart1));
+  console.log("Part 2:", calculateScore(rawInput, scoresPart2));
 }
