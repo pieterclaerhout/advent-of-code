@@ -19,7 +19,11 @@ if (import.meta.main) {
       import.meta.url,
     ).pathname;
 
-    command(inputPath);
+    const rawIput = Deno.readTextFileSync(inputPath)
+      .trimEnd()
+      .replaceAll(/\r?\n/g, "\n");
+
+    command(inputPath, rawIput);
   } catch (e) {
     console.log(e);
     Deno.exit(1);

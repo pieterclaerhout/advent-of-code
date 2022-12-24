@@ -147,9 +147,7 @@ class Board {
   };
 }
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
+const run = (inputPath: string) => {
   const board = new Board(200, inputPath);
 
   console.log("Part 1:", board.resultPart1);
