@@ -1,186 +1,186 @@
-import { readFileSync } from "../utils/readfile.ts";
+enum Blizzard {
+  Nothing = 0,
+  Up = 1,
+  Left = 2,
+  Down = 4,
+  Right = 8,
+}
 
-type XY = [number, number];
-type DirNum = 0 | 1 | 2 | 3;
-type Blizzard = {
-  dir: DirNum;
-  xy: XY;
-};
-const dirArrows = [">", "v", "<", "^"];
+interface Position {
+  row: number;
+  column: number;
+}
 
-const dirs: XY[] = [
-  [1, 0],
-  [0, 1],
-  [-1, 0],
-  [0, -1],
-];
+class Grid {
+  grid: Blizzard[][] = [];
+  minutes = 0;
 
-const parseInput = (rawInput: string) => {
-  const blizzards: Blizzard[] = [];
-  const rows = rawInput.trim().split("\n");
-  const bottomWallY = rows.length - 1;
-  const rightWallX = rows[0].length - 1;
-  rows.forEach((line, y) => {
-    line.split("").forEach((char, x) => {
-      if (dirArrows.includes(char)) {
-        blizzards.push({ xy: [x, y], dir: dirArrows.indexOf(char) as DirNum });
+  constructor(lines: string[]) {
+    for (let row = 1; row < lines.length - 1; row++) {
+      const rowArray: Blizzard[] = [];
+      this.grid.push(rowArray);
+      for (let column = 1; column < lines[row].length - 1; column++) {
+        const letter = lines[row][column];
+        let blizzardNode: Blizzard = Blizzard.Nothing;
+        switch (letter) {
+          case ".":
+            break;
+          case ">":
+            blizzardNode = Blizzard.Right;
+            break;
+          case "<":
+            blizzardNode = Blizzard.Left;
+            break;
+          case "^":
+            blizzardNode = Blizzard.Up;
+            break;
+          case "v":
+            blizzardNode = Blizzard.Down;
+            break;
+          default:
+            throw new Error("we shouldn't get here");
+        }
+
+        rowArray.push(blizzardNode);
       }
-    });
-  });
-  const exit = [rightWallX - 1, bottomWallY] as XY;
-  return { blizzards, bottomWallY, rightWallX, exit };
-};
-
-const dirsAndSelf: XY[] = [...dirs, [0, 0]];
-
-const grid = (xy: XY) => xy[0] + ":" + xy[1];
-const addGrid = (a: XY, b: XY): XY => [a[0] + b[0], a[1] + b[1]];
-
-const stateCache: number[] = [];
-
-const buildForecast = (
-  blizzards: Blizzard[],
-  { bottomWallY, rightWallX }: { bottomWallY: number; rightWallX: number },
-) => {
-  const forecast = [];
-  const horizontalSpace = rightWallX - 1;
-  const verticalSpace = bottomWallY - 1;
-  const loopTime = horizontalSpace * verticalSpace;
-  for (let m = 1; m < loopTime; m++) {
-    const blizzardGrids: Set<string> = new Set();
-    for (const blizzard of blizzards) {
-      const nextXY = addGrid(blizzard.xy, dirs[blizzard.dir]);
-      if (nextXY[0] === 0) nextXY[0] = rightWallX - 1;
-      else if (nextXY[0] === rightWallX) nextXY[0] = 1;
-      else if (nextXY[1] === 0) nextXY[1] = bottomWallY - 1;
-      else if (nextXY[1] === bottomWallY) nextXY[1] = 1;
-      blizzard.xy = nextXY;
-      blizzardGrids.add(grid(nextXY));
-    }
-    forecast[m - 1] = blizzardGrids;
-  }
-  return forecast;
-};
-
-const takeStep = (
-  options: {
-    bottomWallY: number;
-    rightWallX: number;
-    start: XY;
-    exit: XY;
-    best: number;
-    maxMins: number;
-    forecast: Set<string>[];
-  },
-  me: XY = [1, 0],
-  minute = 1,
-  history = "",
-) => {
-  if (minute === options.maxMins) return Infinity;
-  if (minute > options.best) return Infinity;
-  const cacheIndex = (me[0] << 20) + (me[1] << 12) + minute;
-  const cachedState = stateCache[cacheIndex];
-  if (cachedState) return cachedState;
-  const blizzardGrids =
-    options.forecast[(minute - 1) % options.forecast.length];
-  let localBest = Infinity;
-  for (const dir of dirsAndSelf) {
-    if (me[0] === 1 && dir[0] === -1) continue;
-    if (me[0] === options.rightWallX - 1 && dir[0] === 1) continue;
-    if (
-      me[0] === options.start[0] &&
-      me[1] === options.start[1] &&
-      dir[0] !== 0
-    ) {
-      continue;
-    }
-    const moveTo = addGrid(me, dir);
-    if (moveTo[0] === options.exit[0] && moveTo[1] === options.exit[1]) {
-      // history += ' exit'
-      if (history.length < 55) console.log(history);
-      if (minute < options.best) options.best = minute;
-      return minute;
-    }
-    if (moveTo[1] === options.exit[1]) continue;
-    if (moveTo[1] === options.start[1] && moveTo[0] !== options.start[0]) {
-      continue;
-    }
-    if (moveTo[1] < 0 || moveTo[1] > options.bottomWallY) continue;
-    if (!blizzardGrids.has(grid(moveTo))) {
-      const minutes = takeStep(
-        options,
-        moveTo,
-        minute + 1,
-        history + " " + (dirArrows[dirsAndSelf.indexOf(dir)] || "O"),
-      );
-      if (minutes < localBest) localBest = minutes;
     }
   }
-  stateCache[cacheIndex] = localBest;
-  return localBest;
-};
 
-const part1 = (rawInput: string) => {
-  const { blizzards, bottomWallY, rightWallX, exit } = parseInput(rawInput);
-  stateCache.length = 0;
-  const forecast = buildForecast(blizzards, { bottomWallY, rightWallX });
-  const bestTime = takeStep({
-    bottomWallY,
-    rightWallX,
-    forecast,
-    start: [1, 0],
-    exit,
-    best: Infinity,
-    maxMins: (bottomWallY + rightWallX) * 3,
-  });
+  nextMinute = () => {
+    const newGrid: Blizzard[][] = [];
 
-  console.log("Part 1:", bestTime);
-};
+    for (let row = 0; row < this.grid.length; row++) {
+      newGrid.push(new Array(this.grid[row].length).fill(Blizzard.Nothing));
+    }
 
-const part2 = (rawInput: string) => {
-  const { blizzards, bottomWallY, rightWallX, exit } = parseInput(rawInput);
-  const forecast = buildForecast(blizzards, { bottomWallY, rightWallX });
-  const maxMins = (bottomWallY + rightWallX) * 3;
-  const options = {
-    bottomWallY,
-    rightWallX,
-    forecast,
-    start: [1, 0] as XY,
-    exit,
-    best: Infinity,
-    maxMins,
+    for (let row = 0; row < this.grid.length; row++) {
+      for (let column = 0; column < this.grid[0].length; column++) {
+        const blizzardFlag = this.grid[row][column];
+        if (blizzardFlag !== Blizzard.Nothing) {
+          if (blizzardFlag & Blizzard.Left) {
+            const newColumn = (column - 1 + this.grid[0].length) %
+              this.grid[0].length;
+            newGrid[row][newColumn] |= Blizzard.Left;
+          }
+          if (blizzardFlag & Blizzard.Up) {
+            const newRow = (row - 1 + this.grid.length) % this.grid.length;
+            newGrid[newRow][column] |= Blizzard.Up;
+          }
+          if (blizzardFlag & Blizzard.Down) {
+            const newRow = (row + 1) % this.grid.length;
+            newGrid[newRow][column] |= Blizzard.Down;
+          }
+          if (blizzardFlag & Blizzard.Right) {
+            const newColumn = (column + 1) % this.grid[0].length;
+            newGrid[row][newColumn] |= Blizzard.Right;
+          }
+        }
+      }
+    }
+
+    this.grid = newGrid;
   };
-  stateCache.length = 0;
-  const bestTime1 = takeStep(options);
-  if (bestTime1 === Infinity) throw "failed on trip 1";
-  stateCache.length = 0;
-  const bestTime2 = takeStep(
-    {
-      ...options,
-      best: Infinity,
-      start: exit,
-      exit: [1, 0],
-      maxMins: bestTime1 + maxMins,
-    },
-    exit,
-    bestTime1 + 1,
-  );
-  if (bestTime2 === Infinity) throw "failed on trip 2";
-  stateCache.length = 0;
-  const bestTime3 = takeStep(
-    { ...options, best: Infinity, maxMins: bestTime2 + maxMins },
-    [1, 0],
-    bestTime2 + 1,
-  );
-  if (bestTime3 === Infinity) throw "failed on trip 3";
-  // console.log("trip 3", bestTime3, bestTime3 - bestTime2);
 
-  console.log("Part 2:", bestTime3);
-};
+  toKey = (position: Position) =>
+    String(position.row) + "," + String(position.column);
+
+  minutesGo = () => {
+    let queue: Position[] = [];
+    while (true) {
+      this.minutes++;
+      this.nextMinute();
+      if (this.grid[0][0] === Blizzard.Nothing) {
+        queue.push({ row: 0, column: 0 });
+      }
+
+      const newQueue: Position[] = [];
+      const visited = new Set<string>();
+      for (const entry of queue) {
+        if (visited.has(this.toKey(entry))) {
+          continue;
+        }
+        if (
+          entry.row === (this.grid.length - 1) &&
+          entry.column === (this.grid[0].length - 1)
+        ) {
+          return this.minutes;
+        }
+        newQueue.push(...this.iterateMinute(entry));
+        visited.add(this.toKey(entry));
+      }
+      queue = newQueue;
+    }
+  };
+
+  minutesReturn = () => {
+    let queue: Position[] = [];
+    const endRow = this.grid.length - 1;
+    const endColumn = this.grid[0].length - 1;
+
+    while (true) {
+      this.minutes++;
+      this.nextMinute();
+      if (this.grid[endRow][endColumn] === Blizzard.Nothing) {
+        queue.push({ row: endRow, column: endColumn });
+      }
+
+      const newQueue: Position[] = [];
+      const visited = new Set<string>();
+      for (const entry of queue) {
+        if (visited.has(this.toKey(entry))) {
+          continue;
+        }
+        if (entry.row === 0 && entry.column === 0) {
+          return this.minutes;
+        }
+        newQueue.push(...this.iterateMinute(entry));
+        visited.add(this.toKey(entry));
+      }
+      queue = newQueue;
+    }
+  };
+
+  iterateMinute = (position: Position) => {
+    const up = position.row - 1;
+    const down = position.row + 1;
+    const left = position.column - 1;
+    const right = position.column + 1;
+    const result: Position[] = [];
+
+    if (this.grid[position.row][position.column] === Blizzard.Nothing) {
+      result.push(position);
+    }
+    if (up >= 0 && this.grid[up][position.column] === Blizzard.Nothing) {
+      result.push({ row: up, column: position.column });
+    }
+    if (
+      down < this.grid.length &&
+      this.grid[down][position.column] === Blizzard.Nothing
+    ) {
+      result.push({ row: down, column: position.column });
+    }
+    if (left >= 0 && this.grid[position.row][left] === Blizzard.Nothing) {
+      result.push({ row: position.row, column: left });
+    }
+    if (
+      right < this.grid[0].length &&
+      this.grid[position.row][right] === Blizzard.Nothing
+    ) {
+      result.push({ row: position.row, column: right });
+    }
+    return result;
+  };
+}
 
 const run = (_inputPath: string, rawInput: string) => {
-  part1(rawInput);
-  part2(rawInput);
+  const grid = new Grid(rawInput.split("\n"));
+
+  const part1 = grid.minutesGo();
+  grid.minutesReturn();
+  const part2 = grid.minutesGo();
+
+  console.log("Part 1:", part1);
+  console.log("Part 2:", part2);
 };
 
 export default run;
