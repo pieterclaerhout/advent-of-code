@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/pieterclaerhout/advent-of-code/day01"
+	"github.com/pieterclaerhout/advent-of-code/day02"
 )
 
 var day = flag.Int("day", 0, "day to execute")
@@ -21,7 +22,7 @@ func main() {
 
 	commands := []Command{
 		&day01.Command{},
-		// &day02.Command{},
+		&day02.Command{},
 		// &day03.Command{},
 		// &day04.Command{},
 		// &day05.Command{},
@@ -55,7 +56,7 @@ func main() {
 	command := commands[*day-1]
 
 	inputPath := filepath.Join(fmt.Sprintf("day%02d", *day), "input.txt")
-	rawInput, err := ioutil.ReadFile(inputPath)
+	rawInput, err := os.ReadFile(inputPath)
 	if err != nil {
 		fmt.Println("Failed to read:", inputPath)
 		return
