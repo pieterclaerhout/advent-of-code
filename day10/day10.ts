@@ -44,7 +44,7 @@ const part2 = (parsedInput: Operation[]) => {
     const pos = cycle - 1;
     const row = Math.floor(pos / 40);
     const drawn = Math.abs((pos % 40) - x) <= 1;
-    screen[row].push(drawn ? "#" : ".");
+    screen[row].push(drawn ? "█" : " ");
   };
 
   for (const [instr, val] of parsedInput) {

@@ -1,98 +1,45 @@
 package day10
 
 import (
-	"bufio"
 	_ "embed"
 	"fmt"
-	"strconv"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
+type Command struct{}
 
-type Command struct {
-	RegisterX   int
-	CycleNumber int
-	FinalValue  int
-}
+func (cmd *Command) Execute(input string) (interface{}, interface{}) {
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
-}
+	w := 40
 
-func (c *Command) part1() {
-	c.CycleNumber = 0
-	c.RegisterX = 1
-	c.FinalValue = 0
+	c := 0
+	x := 1
+	part1 := 0
+	part2 := ""
 
-	for _, operation := range c.parse() {
-		c.incrementAndControl1()
-		if operation.Type == "addx" {
-			c.incrementAndControl1()
-			c.RegisterX += operation.Value
+	tick := func() {
+		part2 += map[bool]string{
+			true:  "██",
+			false: "  ",
+		}[c%w >= x-1 && c%w <= x+1]
+
+		part2 += map[bool]string{true: "\n"}[c%w == w-1]
+		if c++; (c+w/2)%w == 0 {
+			part1 += c * x
 		}
 	}
 
-	slog.Info("Part 1", slog.Any("finalValue", c.FinalValue))
-}
+	for _, s := range strings.Split(input, "\n") {
+		var ins string
+		var v int
+		fmt.Sscanf(s, "%s %d", &ins, &v)
 
-func (c *Command) part2() {
-	c.CycleNumber = 0
-	c.RegisterX = 1
-	c.FinalValue = 0
-
-	for _, operation := range c.parse() {
-		c.incrementAndControl2()
-		if operation.Type == "addx" {
-			c.incrementAndControl2()
-			c.RegisterX += operation.Value
+		tick()
+		if ins == "addx" {
+			tick()
+			x += v
 		}
 	}
-}
 
-func (c *Command) parse() []Operation {
-	var list []Operation
-
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		line := strings.Fields(sc.Text())
-
-		operation := line[0]
-		var value int
-		if len(line) > 1 {
-			value, _ = strconv.Atoi(line[1])
-		}
-
-		list = append(list, Operation{
-			Type:  operation,
-			Value: value,
-		})
-	}
-
-	return list
-}
-
-func (c *Command) incrementAndControl1() {
-	c.CycleNumber++
-	if (c.CycleNumber-20)%40 == 0 && c.CycleNumber <= 220 {
-		c.FinalValue += c.RegisterX * c.CycleNumber
-	}
-}
-
-func (c *Command) incrementAndControl2() {
-	if c.CycleNumber%40 == 0 && c.CycleNumber <= 220 {
-		fmt.Println()
-	}
-	if c.RegisterX-1 == c.CycleNumber%40 || c.RegisterX == c.CycleNumber%40 || c.RegisterX+1 == c.CycleNumber%40 {
-		fmt.Print("#")
-	} else {
-		fmt.Print(".")
-	}
-	c.CycleNumber++
+	return part1, "\n" + strings.TrimSpace(part2)
 }
