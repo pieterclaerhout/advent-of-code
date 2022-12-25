@@ -27,6 +27,7 @@ import (
 	"github.com/pieterclaerhout/advent-of-code/day22"
 	"github.com/pieterclaerhout/advent-of-code/day23"
 	"github.com/pieterclaerhout/advent-of-code/day24"
+	"github.com/pieterclaerhout/advent-of-code/day25"
 	"golang.org/x/exp/slog"
 )
 
@@ -68,6 +69,7 @@ func main() {
 		&day22.Command{},
 		&day23.Command{},
 		&day24.Command{},
+		&day25.Command{},
 	}
 
 	if *day > len(commands) {
