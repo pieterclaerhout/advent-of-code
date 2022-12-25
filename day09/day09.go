@@ -1,98 +1,61 @@
 package day09
 
 import (
-	"bufio"
 	_ "embed"
-	"strconv"
+	"fmt"
+	"image"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
-
-//go:embed input.txt
-var input string
 
 type Command struct {
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
-}
+func (c *Command) Execute(input string) (interface{}, interface{}) {
+	dirs := map[rune]image.Point{
+		'U': {0, -1},
+		'R': {1, 0},
+		'D': {0, 1},
+		'L': {-1, 0},
+	}
 
-func (c *Command) part1() {
-	visitedByTail := make(map[Point]bool)
+	rope := [10]image.Point{}
 
-	head := Point{X: 0, Y: 0}
-	tail := Point{X: 0, Y: 0}
-	visitedByTail[tail] = true
+	part1 := map[image.Point]struct{}{}
+	part2 := map[image.Point]struct{}{}
 
-	for _, motion := range c.parse() {
-		moves := motion.Moves
-		for moves > 0 {
-			switch motion.Direction {
-			case 'U':
-				head.Y++
-			case 'R':
-				head.X++
-			case 'D':
-				head.Y--
-			case 'L':
-				head.X--
+	for _, s := range strings.Split(input, "\n") {
+		var dir rune
+		var steps int
+		fmt.Sscanf(s, "%c %d", &dir, &steps)
+
+		for i := 0; i < steps; i++ {
+			rope[0] = rope[0].Add(dirs[dir])
+
+			for i := 1; i < len(rope); i++ {
+				if d := rope[i-1].Sub(rope[i]); abs(d.X) > 1 || abs(d.Y) > 1 {
+					rope[i] = rope[i].Add(image.Point{sgn(d.X), sgn(d.Y)})
+				}
 			}
-			moves--
-			tail = tail.AdjustTail1(head)
-			visitedByTail[tail] = true
+
+			part1[rope[1]], part2[rope[len(rope)-1]] = struct{}{}, struct{}{}
 		}
 	}
 
-	slog.Info("Part 1", slog.Any("visitedByTail", len(visitedByTail)))
+	return len(part1), len(part2)
 }
 
-func (c *Command) part2() {
-	visitedByTail := map[Point]bool{}
-	knots := [10]Point{}
-
-	visitedByTail[knots[9]] = true
-
-	for _, motion := range c.parse() {
-		moves := motion.Moves
-		for moves > 0 {
-			switch motion.Direction {
-			case 'U':
-				knots[0].Y++
-			case 'R':
-				knots[0].X++
-			case 'D':
-				knots[0].Y--
-			case 'L':
-				knots[0].X--
-			}
-			for i := range knots[:len(knots)-1] {
-				knots[i+1] = knots[i+1].AdjustTail2(knots[i])
-			}
-			moves--
-			visitedByTail[knots[9]] = true
-		}
+func abs(x int) int {
+	if x < 0 {
+		return -x
 	}
-
-	slog.Info("Part 2", slog.Any("visitedByTail", len(visitedByTail)))
+	return x
 }
 
-func (c *Command) parse() []Motion {
-	var list []Motion
-
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		direction := rune(sc.Text()[0])
-		moves, _ := strconv.Atoi(sc.Text()[2:])
-		list = append(list, Motion{
-			Direction: direction,
-			Moves:     moves,
-		})
+func sgn(x int) int {
+	if x < 0 {
+		return -1
+	} else if x > 0 {
+		return 1
 	}
-
-	return list
+	return 0
 }
