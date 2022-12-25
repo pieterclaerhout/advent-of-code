@@ -1,5 +1,3 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 const regex =
   /Each ore robot costs (?<ore_ore_cost>[0-9]+) ore\. Each clay robot costs (?<clay_ore_cost>[0-9]+) ore\. Each obsidian robot costs (?<obsidian_ore_cost>[0-9]+) ore and (?<obsidian_clay_cost>[0-9]+) clay\. Each geode robot costs (?<geode_ore_cost>[0-9]+) ore and (?<geode_obsidian_cost>[0-9]+) obsidian\.$/m;
 
@@ -11,8 +9,8 @@ type ParsedInput = {
   max_costs: Map<Resource, number>;
 };
 
-const parseInput = (path: string): ParsedInput[] =>
-  readFileSync(path)
+const parseInput = (rawInput: string): ParsedInput[] =>
+  rawInput
     .replaceAll("\r", "").split("\n")
     .map((line): Blueprint => {
       const {
@@ -157,8 +155,8 @@ const dfs = (
   return max_geodes;
 };
 
-const part1 = (path: string) => {
-  const input = parseInput(path);
+const part1 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const result = input.reduce(
     (acc, _, i) => acc + dfs(input, 24, i) * (i + 1),
     0,
@@ -167,8 +165,8 @@ const part1 = (path: string) => {
   console.log("Part 1:", result);
 };
 
-const part2 = (path: string) => {
-  const input = parseInput(path);
+const part2 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const result = input.slice(0, 3).reduce(
     (acc, _, i) => acc * dfs(input, 32, i),
     1,
@@ -176,12 +174,7 @@ const part2 = (path: string) => {
 
   console.log("Part 2:", result);
 };
-
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

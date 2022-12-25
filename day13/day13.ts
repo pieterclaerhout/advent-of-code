@@ -1,9 +1,7 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 type NumberOrArray = number | NumberOrArray[];
 
-const parseInput = (path: string) =>
-  readFileSync(path)
+const parseInput = (rawInput: string) =>
+  rawInput
     .split("\n\n")
     .map((pair) => {
       const [packet1, packet2] = pair.split("\n").map((p) => JSON.parse(p));
@@ -40,8 +38,8 @@ const compareValues = (a: NumberOrArray, b: NumberOrArray): -1 | 0 | 1 => {
   return 0;
 };
 
-const part1 = (path: string) => {
-  const input = parseInput(path);
+const part1 = (rawInput: string) => {
+  const input = parseInput(rawInput);
 
   let indexSum = 0;
   for (let p = 0; p < input.length; p++) {
@@ -53,8 +51,8 @@ const part1 = (path: string) => {
   console.log("Part 1:", indexSum);
 };
 
-const part2 = (path: string) => {
-  const input = parseInput(path);
+const part2 = (rawInput: string) => {
+  const input = parseInput(rawInput);
 
   const flatPackets = [];
   for (const pair of input) {
@@ -74,11 +72,7 @@ const part2 = (path: string) => {
   console.log("Part 2:", result);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

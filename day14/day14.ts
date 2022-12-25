@@ -1,7 +1,5 @@
-import { readFileSync } from "../utils/readfile.ts";
-
-const parseInput = (path: string) =>
-  readFileSync(path)
+const parseInput = (rawInput: string) =>
+  rawInput
     .split("\n")
     .map((line) =>
       line
@@ -83,28 +81,23 @@ const simulateSand = (map: ("X" | "S")[][], ground?: number) => {
   }
 };
 
-const part1 = (path: string) => {
-  const input = parseInput(path);
+const part1 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const map = buildMap(input);
   const result = simulateSand(map);
 
   console.log("Part 1:", result);
 };
 
-const part2 = (path: string) => {
-  const input = parseInput(path);
+const part2 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const map = buildMap(input);
   const groundY = map.length + 1;
   const result = simulateSand(map, groundY);
 
   console.log("Part 2:", result);
 };
-
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

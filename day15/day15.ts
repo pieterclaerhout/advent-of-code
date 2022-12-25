@@ -1,7 +1,7 @@
 import { readFileSync } from "../utils/readfile.ts";
 
-const parseInput = (path: string) =>
-  readFileSync(path)
+const parseInput = (rawInput: string) =>
+  rawInput
     .split("\n")
     .map((line) => {
       const sensorX = line.match(/Sensor at x=(-?\d+)/)![1];
@@ -14,8 +14,8 @@ const parseInput = (path: string) =>
       };
     });
 
-const part1 = (path: string) => {
-  const input = parseInput(path);
+const part1 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const targetRow = input.length < 30 ? 10 : 2000000;
   const map: Map<number, Map<number, "S" | "B" | "#">> = new Map();
 
@@ -51,8 +51,8 @@ const part1 = (path: string) => {
   console.log("Part 1:", freeSpaces);
 };
 
-const part2 = (path: string) => {
-  const input = parseInput(path);
+const part2 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const maxCoord = input.length < 30 ? 20 : 4000000;
 
   const sensors = input.map(({ sensor, beacon }) => {
@@ -111,11 +111,7 @@ const part2 = (path: string) => {
   }
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

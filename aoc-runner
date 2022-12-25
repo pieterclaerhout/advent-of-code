@@ -1,3 +1,5 @@
+#!/usr/bin/env deno --allow-read
+
 if (import.meta.main) {
   try {
     const day = Deno.args[0];
@@ -23,7 +25,7 @@ if (import.meta.main) {
       .trimEnd()
       .replaceAll(/\r?\n/g, "\n");
 
-    command(rawIput);
+    command(inputPath, rawIput);
   } catch (e) {
     console.log(e);
     Deno.exit(1);

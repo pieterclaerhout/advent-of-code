@@ -1,7 +1,5 @@
-import { readFileSync } from "../utils/readfile.ts";
-
-const parseInput = (path: string): number[][] =>
-  readFileSync(path)
+const parseInput = (rawInput: string): number[][] =>
+  rawInput
     .split("\n")
     .map((line) => line.split(",").map((v) => +v));
 
@@ -24,8 +22,8 @@ const neighbors = function* (x: number, y: number, z: number) {
   }
 };
 
-const part1 = (path: string) => {
-  const input = parseInput(path);
+const part1 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const gridMap: Set<string> = new Set();
   let surfaceArea = 0;
   for (const [x, y, z] of input) {
@@ -42,8 +40,8 @@ const part1 = (path: string) => {
   console.log("Part 1:", surfaceArea);
 };
 
-const part2 = (path: string) => {
-  const input = parseInput(path);
+const part2 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const cubeMap: Set<string> = new Set();
   const spaceMap: Set<string> = new Set();
 
@@ -130,11 +128,7 @@ const part2 = (path: string) => {
   console.log("Part 2:", surfaceArea);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

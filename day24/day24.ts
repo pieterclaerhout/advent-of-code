@@ -172,7 +172,7 @@ class Grid {
   };
 }
 
-const run = (_inputPath: string, rawInput: string) => {
+export default function (_inputPath: string, rawInput: string) {
   const grid = new Grid(rawInput.split("\n"));
 
   const part1 = grid.minutesGo();
@@ -181,6 +181,4 @@ const run = (_inputPath: string, rawInput: string) => {
 
   console.log("Part 1:", part1);
   console.log("Part 2:", part2);
-};
-
-export default run;
+}

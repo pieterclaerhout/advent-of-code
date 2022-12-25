@@ -1,6 +1,6 @@
 import { readFileSync } from "../utils/readfile.ts";
 
-const part1 = (inputPath: string): void => {
+const part1 = (rawInput: string): void => {
   type Player = {
     pos: number[];
     direction: number;
@@ -107,7 +107,7 @@ const part1 = (inputPath: string): void => {
     };
   };
 
-  const input = readFileSync(inputPath)
+  const input = rawInput
     .split("\n")
     .filter((l) => l.length !== 0);
 
@@ -147,7 +147,7 @@ const part1 = (inputPath: string): void => {
   console.log("Part 1:", answer);
 };
 
-const part2 = (inputPath: string): void => {
+const part2 = (rawInput: string): void => {
   type Location = {
     face: number;
     pos: number[];
@@ -406,7 +406,7 @@ const part2 = (inputPath: string): void => {
     return getPlayerAfterSteps(player, instruction, map);
   };
 
-  const input = readFileSync(inputPath)
+  const input = rawInput
     .split("\n")
     .filter((l) => l.length !== 0);
 
@@ -456,12 +456,7 @@ const part2 = (inputPath: string): void => {
 
   console.log("Part 2:", answer);
 };
-
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

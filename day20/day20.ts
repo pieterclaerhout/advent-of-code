@@ -1,9 +1,7 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 type NumberContainer = { n: number };
 
-const parseInput = (path: string, decryptKey = 1): NumberContainer[] =>
-  readFileSync(path)
+const parseInput = (rawInput: string, decryptKey = 1): NumberContainer[] =>
+  rawInput
     .split("\n")
     .map((line) => ({ n: +line * decryptKey }));
 
@@ -29,27 +27,23 @@ const getCoordinates = (mixed: NumberContainer[]): number => {
   );
 };
 
-const part1 = (path: string) => {
-  const input = parseInput(path);
+const part1 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const mixed = mix(input);
   const result = getCoordinates(mixed);
 
   console.log("Part 1:", result);
 };
 
-const part2 = (path: string) => {
-  const input = parseInput(path, 811589153);
+const part2 = (rawInput: string) => {
+  const input = parseInput(rawInput, 811589153);
   const mixed = mix(input, 10);
   const result = getCoordinates(mixed);
 
   console.log("Part 2:", result);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

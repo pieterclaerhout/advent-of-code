@@ -1,5 +1,3 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 interface Monkey {
   name: string;
   leftDependency: string | null;
@@ -18,8 +16,8 @@ interface Node {
   isHuman: boolean;
 }
 
-const parseInput = (path: string): Monkey[] =>
-  readFileSync(path)
+const parseInput = (rawInput: string): Monkey[] =>
+  rawInput
     .split("\n")
     .map((line) => {
       const [name, job] = line.split(": ");
@@ -95,8 +93,8 @@ const buildMonkeyIndex = (path: string): Map<string, Monkey> => {
   );
 };
 
-const part1 = (path: string) => {
-  const monkeyIndex = buildMonkeyIndex(path);
+const part1 = (rawInput: string) => {
+  const monkeyIndex = buildMonkeyIndex(rawInput);
 
   const evaluateMonkey = (monkeyName: string): number => {
     const monkey = monkeyIndex.get(monkeyName)!;
@@ -114,8 +112,8 @@ const part1 = (path: string) => {
   console.log("Part 1:", evaluateMonkey("root"));
 };
 
-const part2 = (path: string) => {
-  const monkeyIndex = buildMonkeyIndex(path);
+const part2 = (rawInput: string) => {
+  const monkeyIndex = buildMonkeyIndex(rawInput);
 
   const buildEvaluationTree = (monkeyName: string): Node | number => {
     const monkey = monkeyIndex.get(monkeyName)!;
@@ -178,11 +176,7 @@ const part2 = (path: string) => {
   console.log("Part 2:", evaluateHumanConstant());
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

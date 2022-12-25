@@ -1,5 +1,3 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 const TILES = "abcdefghijklmnopqrstuvwxyz".split("");
 
 type PathGrid = {
@@ -13,8 +11,8 @@ type PathGrid = {
 
 const gridKey = (x: number, y: number) => `${x}:${y}`;
 
-const parseInput = (path: string) =>
-  readFileSync(path)
+const parseInput = (rawInput: string) =>
+  rawInput
     .split("\n")
     .map((line) => line.split(""));
 
@@ -115,8 +113,8 @@ function constructPath(
   return path;
 }
 
-const part1 = (path: string) => {
-  const input = parseInput(path);
+const part1 = (rawInput: string) => {
+  const input = parseInput(rawInput);
 
   let start: [number, number] | null = null;
   let end: [number, number] | null = null;
@@ -137,8 +135,8 @@ const part1 = (path: string) => {
   }
 };
 
-const part2 = (path: string) => {
-  const input = parseInput(path);
+const part2 = (rawInput: string) => {
+  const input = parseInput(rawInput);
 
   let end: [number, number] | null = null;
   for (let y = 0; y < input.length; y++) {
@@ -171,11 +169,7 @@ const part2 = (path: string) => {
   console.log("Part 2:", shortestPath);
 };
 
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

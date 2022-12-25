@@ -1,7 +1,5 @@
-import { readFileSync } from "../utils/readfile.ts";
-
-const parseInput = (path: string) =>
-  readFileSync(path)
+const parseInput = (rawInput: string) =>
+  rawInput
     .split("")
     .map((dir) => (dir === ">" ? 1 : -1)) as (-1 | 1)[];
 
@@ -60,8 +58,8 @@ const commitRock = (
   }
 };
 
-const part1 = (path: string) => {
-  const input = parseInput(path);
+const part1 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   let w = 0;
   let highestPoint = 0;
   const map: (1 | undefined)[][] = [];
@@ -90,8 +88,8 @@ const part1 = (path: string) => {
   console.log("Part 1:", highestPoint);
 };
 
-const part2 = (path: string) => {
-  const input = parseInput(path);
+const part2 = (rawInput: string) => {
+  const input = parseInput(rawInput);
   const windLoop = input.length * 5;
 
   let w = 0;
@@ -149,12 +147,7 @@ const part2 = (path: string) => {
   const result = (highestPoint + skippedHeight);
   console.log("Part 2:", result);
 };
-
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  part1(rawInput);
+  part2(rawInput);
+}

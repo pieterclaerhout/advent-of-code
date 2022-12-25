@@ -1,13 +1,10 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 type ParsedInput = {
   valveFlowMap: Map<string, number>;
   tunnelMap: Map<string, string[]>;
 };
 
-const parseInput = (path: string): ParsedInput => {
-  const lines = readFileSync(path)
-    .split("\n");
+const parseInput = (rawInput: string): ParsedInput => {
+  const lines = rawInput.split("\n");
 
   const valves = new Map<string, number>();
   const tunnels = new Map<string, string[]>();
@@ -29,8 +26,8 @@ const parseInput = (path: string): ParsedInput => {
   };
 };
 
-const solvePart1 = (path: string): number => {
-  const { valveFlowMap, tunnelMap } = parseInput(path);
+const solvePart1 = (rawInput: string): number => {
+  const { valveFlowMap, tunnelMap } = parseInput(rawInput);
 
   const distanceMap: Record<string, Record<string, number>> = {};
   const nonEmptyValves: string[] = [];
@@ -126,8 +123,8 @@ const solvePart1 = (path: string): number => {
   return dfs(30, "AA", 0);
 };
 
-const solvePart2 = (input: string): number => {
-  const { valveFlowMap, tunnelMap } = parseInput(input);
+const solvePart2 = (rawInput: string): number => {
+  const { valveFlowMap, tunnelMap } = parseInput(rawInput);
 
   const distanceMap: Record<string, Record<string, number>> = {};
   const nonEmptyValves: string[] = [];
@@ -231,21 +228,7 @@ const solvePart2 = (input: string): number => {
   return maxFlow;
 };
 
-const part1 = (path: string) => {
-  const result = solvePart1(path);
-  console.log("Part 1:", result);
-};
-
-const part2 = (path: string) => {
-  const result = solvePart2(path);
-  console.log("Part 2:", result);
-};
-
-const run = () => {
-  const inputPath = new URL("input.txt", import.meta.url).pathname;
-
-  part1(inputPath);
-  part2(inputPath);
-};
-
-export default run;
+export default function (_inputPath: string, rawInput: string) {
+  console.log("Part 1:", solvePart1(rawInput));
+  console.log("Part 2:", solvePart2(rawInput));
+}

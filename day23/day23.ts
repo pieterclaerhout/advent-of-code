@@ -1,5 +1,3 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 type Vector = [row: number, column: number];
 type ElfMove = [from: Vector, to: Vector];
 type PotentialMove = (row: number, column: number) => ElfMove | null;
@@ -13,12 +11,10 @@ class Board {
   public resultPart1 = 0;
   public resultPart2 = 0;
 
-  constructor(size: number, inputPath: string) {
+  constructor(size: number, input: string[]) {
     this.board = new Array(size)
       .fill(undefined)
       .map(() => new Array(size).fill(false));
-
-    const input = readFileSync(inputPath).split("\n");
 
     for (let row = 0; row < input.length; ++row) {
       for (let column = 0; column < input[row].length; ++column) {
@@ -147,11 +143,9 @@ class Board {
   };
 }
 
-const run = (inputPath: string) => {
-  const board = new Board(200, inputPath);
+export default function (_inputPath: string, rawInput: string) {
+  const board = new Board(200, rawInput.split("\n"));
 
   console.log("Part 1:", board.resultPart1);
   console.log("Part 2:", board.resultPart2);
-};
-
-export default run;
+}
