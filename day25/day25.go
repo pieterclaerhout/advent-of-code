@@ -14,8 +14,21 @@ type Command struct {
 }
 
 func (c *Command) Execute() {
+	sum := c.snafuToDecimal(input)
+	slog.Info("Part 1", slog.Any("result", sum))
 
-	mapping := map[rune]int{'=': -2, '-': -1, '0': 0, '1': 1, '2': 2}
+	snafu := c.decimalToSnafu(sum)
+	slog.Info("Part 2", slog.Any("result", snafu))
+}
+
+func (c *Command) snafuToDecimal(input string) int {
+	mapping := map[rune]int{
+		'=': -2,
+		'-': -1,
+		'0': 0,
+		'1': 1,
+		'2': 2,
+	}
 
 	sum := 0
 	for _, s := range strings.Fields(input) {
@@ -26,13 +39,17 @@ func (c *Command) Execute() {
 		sum += n
 	}
 
-	slog.Info("Part 1", slog.Any("result", sum))
+	return sum
+}
+
+func (c *Command) decimalToSnafu(sum int) string {
+	mapping := []string{"=", "-", "0", "1", "2"}
 
 	snafu := ""
 	for sum > 0 {
-		snafu = string("=-012"[(sum+2)%5]) + snafu
+		snafu = mapping[(sum+2)%5] + snafu
 		sum = (sum + 2) / 5
 	}
 
-	slog.Info("Part 2", slog.Any("result", snafu))
+	return snafu
 }
