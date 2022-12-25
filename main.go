@@ -9,6 +9,7 @@ import (
 
 	"github.com/pieterclaerhout/advent-of-code/day01"
 	"github.com/pieterclaerhout/advent-of-code/day02"
+	"github.com/pieterclaerhout/advent-of-code/day03"
 )
 
 var day = flag.Int("day", 0, "day to execute")
@@ -23,7 +24,7 @@ func main() {
 	commands := []Command{
 		&day01.Command{},
 		&day02.Command{},
-		// &day03.Command{},
+		&day03.Command{},
 		// &day04.Command{},
 		// &day05.Command{},
 		// &day06.Command{},
@@ -65,6 +66,7 @@ func main() {
 	input := string(rawInput)
 	input = strings.ReplaceAll(input, "\r\n", "\n")
 	input = strings.ReplaceAll(input, "\r", "\n")
+	input = strings.TrimRight(input, "\n")
 
 	result1, result2 := command.Execute(string(input))
 

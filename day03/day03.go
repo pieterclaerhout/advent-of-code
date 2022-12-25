@@ -1,68 +1,60 @@
 package day03
 
 import (
-	"bufio"
 	_ "embed"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
-
-//go:embed input.txt
-var input string
 
 type Command struct {
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
+func (c *Command) Execute(input string) (interface{}, interface{}) {
+	lines := strings.Split(input, "\n")
+	return c.part1(lines), c.part2(lines)
 }
 
-func (c *Command) part1() {
-	ruckSacks := c.parse()
+func (c *Command) part1(lines []string) int {
+	var prioritySum int
 
-	var score int
-
-	for _, ruckSack := range ruckSacks {
-		score += ruckSack.Priorities()
+	for _, line := range lines {
+		bagSize := len(line)
+		comp1, comp2 := line[:bagSize/2], line[bagSize/2:]
+		common := intersect(comp1, comp2)
+		prioritySum += itemPriority(common)
 	}
 
-	slog.Info("Part 1", slog.Any("score", score))
+	return prioritySum
 }
 
-func (c *Command) part2() {
+func (c *Command) part2(lines []string) int {
+	var prioritySum int
 
-	groups := [][]RuckSack{}
+	for i := 0; i < len(lines); i = i + 3 {
+		common := intersect(lines[i+2], intersect(lines[i], lines[i+1]))
+		prioritySum += itemPriority(common)
+	}
 
-	subgroup := []RuckSack{}
-	for _, ruckSack := range c.parse() {
-		subgroup = append(subgroup, ruckSack)
-		if len(subgroup) == 3 {
-			groups = append(groups, subgroup)
-			subgroup = []RuckSack{}
+	return prioritySum
+}
+
+func intersect(a, b string) string {
+	intersection := strings.Builder{}
+	for _, c := range a {
+		if strings.ContainsRune(b, c) && !strings.ContainsRune(intersection.String(), c) {
+			intersection.WriteRune(c)
 		}
 	}
-
-	var score int
-	for _, group := range groups {
-		common := intersect(group[0].All(), group[1].All())
-		common = intersect(common, group[2].All())
-		score += scoreForCharacter(common[0])
-	}
-
-	slog.Info("Part 2", slog.Any("score", score))
+	return intersection.String()
 }
 
-func (c *Command) parse() []RuckSack {
-	result := []RuckSack{}
-
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		result = append(result, NewRuckSack(sc.Text()))
+func itemPriority(item string) int {
+	const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	for _, char := range item {
+		for i, c := range alphabet {
+			if c == char {
+				return i + 1
+			}
+		}
 	}
-
-	return result
+	return 0
 }
