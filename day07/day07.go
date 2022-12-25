@@ -1,7 +1,8 @@
 package day07
 
 import (
-	"strconv"
+	"fmt"
+	"path"
 	"strings"
 )
 
@@ -9,59 +10,35 @@ type Command struct {
 }
 
 func (c *Command) Execute(input string) (interface{}, interface{}) {
-	fs := c.parse(input)
 
-	return c.part1(fs), c.part2(fs)
-}
+	fs, cd := map[string]int{}, ""
+	for _, s := range strings.Split(input, "\n") {
+		var size int
+		var name string
 
-func (c *Command) part1(fs Node) int {
-	return fs.SumLessThan100000()
-}
-
-func (c *Command) part2(fs Node) int {
-	freeSpace := 70000000 - fs.Size
-	neededSpace := 30000000 - freeSpace
-
-	return fs.FindSmallerDir(neededSpace)
-}
-
-func (c *Command) parse(input string) Node {
-	fs := NewDir("/", nil)
-	fsContext := &fs
-
-	for _, line := range strings.Split(input, "\n") {
-		lineParts := strings.Fields(line)
-
-		if lineParts[0] == "$" {
-
-			command := lineParts[1]
-			if command == "ls" {
-				continue
+		if strings.HasPrefix(s, "$ cd") {
+			cd = path.Join(cd, strings.Fields(s)[2])
+		} else if _, err := fmt.Sscanf(s, "%d %s", &size, &name); err == nil {
+			for d := cd; d != "/"; d = path.Dir(d) {
+				fs[d] += size
 			}
-
-			arg := lineParts[2]
-
-			switch arg {
-			case "/":
-				fsContext = &fs
-			case "..":
-				fsContext = fsContext.Parent
-			default:
-				fsContext = fsContext.Children[arg]
-			}
-			continue
-		}
-
-		if lineParts[0] == "dir" {
-			node := NewDir(lineParts[1], fsContext)
-			fsContext.Children[node.Name] = &node
-		} else {
-			size, _ := strconv.Atoi(lineParts[0])
-			node := NewFile(lineParts[1], size, fsContext)
-			fsContext.Children[node.Name] = &node
+			fs["/"] += size
 		}
 	}
 
-	fs.ComputeSize()
-	return fs
+	part1 := 0
+	for _, s := range fs {
+		if s <= 100000 {
+			part1 += s
+		}
+	}
+
+	part2 := fs["/"]
+	for _, s := range fs {
+		if s+70000000-fs["/"] >= 30000000 && s < part2 {
+			part2 = s
+		}
+	}
+
+	return part1, part2
 }
