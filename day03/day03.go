@@ -1,7 +1,6 @@
 package day03
 
 import (
-	_ "embed"
 	"strings"
 )
 

@@ -1,55 +1,65 @@
 package day04
 
 import (
-	"bufio"
-	_ "embed"
+	"fmt"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
+type Range struct {
+	s int
+	e int
+}
+
+func (r1 Range) Contains(r2 Range) bool {
+	return r1.s <= r2.s && r1.e >= r2.e
+}
+
+func (r1 Range) Overlap(r2 Range) bool {
+	return r1.s <= r2.s && r1.e >= r2.s || r2.s <= r1.s && r2.e >= r1.s
+}
 
 type Command struct {
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
+func (c *Command) Execute(input string) (interface{}, interface{}) {
+	ranges := c.parse(input)
+
+	return c.part1(ranges), c.part2(ranges)
 }
 
-func (c *Command) part1() {
+func (c *Command) part1(ranges [][]Range) int {
 	var countOverlap int
-	for _, pair := range c.parse() {
-		if pair.OverlapsCompletely() {
+	for _, r := range ranges {
+		if r[0].Contains(r[1]) || r[1].Contains(r[0]) {
 			countOverlap++
 		}
 	}
 
-	slog.Info("Part 1", slog.Any("countOverlap", countOverlap))
+	return countOverlap
 }
 
-func (c *Command) part2() {
+func (c *Command) part2(ranges [][]Range) int {
 	var countOverlap int
-	for _, pair := range c.parse() {
-		if pair.Overlaps() {
+	for _, r := range ranges {
+		if r[0].Overlap(r[1]) {
 			countOverlap++
 		}
 	}
-
-	slog.Info("Part 2", slog.Any("countOverlap", countOverlap))
+	return countOverlap
 }
 
-func (c *Command) parse() []Pair {
-	result := []Pair{}
+func (c *Command) parse(input string) [][]Range {
+	ranges := [][]Range{}
 
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
+	for _, line := range strings.Split(input, "\n") {
+		var r1, r2 Range
 
-	for sc.Scan() {
-		result = append(result, NewPair(sc.Text()))
+		if _, err := fmt.Sscanf(line, "%d-%d,%d-%d", &r1.s, &r1.e, &r2.s, &r2.e); err != nil {
+			continue
+		}
+
+		ranges = append(ranges, []Range{r1, r2})
 	}
 
-	return result
+	return ranges
 }
