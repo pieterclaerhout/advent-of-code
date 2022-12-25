@@ -1,39 +1,24 @@
 package day06
 
-import (
-	_ "embed"
-
-	"golang.org/x/exp/slog"
-)
-
-//go:embed input.txt
-var input string
-
 type Command struct {
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
+func (c *Command) Execute(input string) (interface{}, interface{}) {
+	return c.firstStartOfPackage(input, 4), c.firstStartOfPackage(input, 14)
 }
 
-func (c *Command) part1() {
-	slog.Info("Part 1", slog.Any("result", c.firstStartOfPackage(4)))
-}
+func (c *Command) firstStartOfPackage(input string, length int) int {
 
-func (c *Command) part2() {
-	slog.Info("Part 2", slog.Any("result", c.firstStartOfPackage(14)))
-}
-
-func (c *Command) firstStartOfPackage(differentCharactersNeeded int) int {
-	for i := range input {
-		charactersSet := map[byte]bool{}
-		for j := 0; j < differentCharactersNeeded; j++ {
-			charactersSet[input[i+j]] = true
+	for i := length; i <= len(input); i++ {
+		m := map[rune]struct{}{}
+		for _, r := range input[i-length : i] {
+			m[r] = struct{}{}
 		}
-		if len(charactersSet) == differentCharactersNeeded {
-			return i + differentCharactersNeeded
+
+		if len(m) >= length {
+			return i
 		}
 	}
-	return 0
+
+	return -1
 }
