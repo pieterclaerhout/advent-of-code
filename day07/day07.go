@@ -1,58 +1,45 @@
 package day07
 
 import (
-	"bufio"
-	_ "embed"
 	"strconv"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
-
-//go:embed input.txt
-var input string
 
 type Command struct {
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
+func (c *Command) Execute(input string) (interface{}, interface{}) {
+	fs := c.parse(input)
+
+	return c.part1(fs), c.part2(fs)
 }
 
-func (c *Command) part1() {
-	fs := c.parse()
-	slog.Info("Part 1", slog.Any("totalSize", fs.SumLessThan100000()))
+func (c *Command) part1(fs Node) int {
+	return fs.SumLessThan100000()
 }
 
-func (c *Command) part2() {
-	fs := c.parse()
-
+func (c *Command) part2(fs Node) int {
 	freeSpace := 70000000 - fs.Size
 	neededSpace := 30000000 - freeSpace
-	result := fs.FindSmallerDir(neededSpace)
 
-	slog.Info("Part 2", slog.Any("result", result))
+	return fs.FindSmallerDir(neededSpace)
 }
 
-func (c *Command) parse() Node {
+func (c *Command) parse(input string) Node {
 	fs := NewDir("/", nil)
 	fsContext := &fs
 
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
+	for _, line := range strings.Split(input, "\n") {
+		lineParts := strings.Fields(line)
 
-	for sc.Scan() {
-		line := strings.Fields(sc.Text())
+		if lineParts[0] == "$" {
 
-		if line[0] == "$" {
-
-			command := line[1]
+			command := lineParts[1]
 			if command == "ls" {
 				continue
 			}
 
-			arg := line[2]
+			arg := lineParts[2]
 
 			switch arg {
 			case "/":
@@ -65,12 +52,12 @@ func (c *Command) parse() Node {
 			continue
 		}
 
-		if line[0] == "dir" {
-			node := NewDir(line[1], fsContext)
+		if lineParts[0] == "dir" {
+			node := NewDir(lineParts[1], fsContext)
 			fsContext.Children[node.Name] = &node
 		} else {
-			size, _ := strconv.Atoi(line[0])
-			node := NewFile(line[1], size, fsContext)
+			size, _ := strconv.Atoi(lineParts[0])
+			node := NewFile(lineParts[1], size, fsContext)
 			fsContext.Children[node.Name] = &node
 		}
 	}
