@@ -1,89 +1,82 @@
 package day05
 
 import (
-	"bufio"
-	_ "embed"
 	"fmt"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
-
-//go:embed input.txt
-var input string
 
 type Command struct {
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
+func (c *Command) Execute(input string) (interface{}, interface{}) {
+	return c.part1(input), c.part2(input)
 }
 
-func (c *Command) part1() {
-	stacks := [9]stack{}
+func (c *Command) part1(input string) string {
+	stacks := c.parseStacks(input)
 
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		if strings.HasPrefix(sc.Text(), "[") {
-			for i, r := range sc.Text() {
-				if r != ' ' && r != '[' && r != ']' {
-					stacks[i/4].addToBottom(r)
-				}
-			}
-		}
-
-		if strings.HasPrefix(sc.Text(), "move") {
+	for _, line := range strings.Split(input, "\n") {
+		if strings.HasPrefix(line, "move") {
 			var toMove int
 			var from int
 			var to int
-			fmt.Sscanf(sc.Text(), "move %d from %d to %d", &toMove, &from, &to)
+			fmt.Sscanf(line, "move %d from %d to %d", &toMove, &from, &to)
 
 			for move := 0; move < toMove; move++ {
-				stacks[to-1].push(stacks[from-1].pop())
+				stacks[to-1].Push(stacks[from-1].Pop())
 			}
 		}
 	}
 
 	result := ""
 	for _, s := range stacks {
-		result += string(s.pop())
+		result += string(s.Pop())
 	}
 
-	slog.Info("Part 1", slog.Any("result", result))
+	return result
 }
 
-func (c *Command) part2() {
-	stacks := [9]stack{}
+func (c *Command) part2(input string) string {
+	stacks := c.parseStacks(input)
 
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		if strings.HasPrefix(sc.Text(), "[") {
-			for i, r := range sc.Text() {
-				if r != ' ' && r != '[' && r != ']' {
-					stacks[i/4].addToBottom(r)
-				}
-			}
-		}
-
-		if strings.HasPrefix(sc.Text(), "move") {
+	for _, line := range strings.Split(input, "\n") {
+		if strings.HasPrefix(line, "move") {
 			var toMove int
 			var from int
 			var to int
-			fmt.Sscanf(sc.Text(), "move %d from %d to %d", &toMove, &from, &to)
+			fmt.Sscanf(line, "move %d from %d to %d", &toMove, &from, &to)
 
-			stacks[to-1].push(stacks[from-1].popN(toMove)...)
+			stacks[to-1].Push(stacks[from-1].PopN(toMove)...)
 		}
 	}
 
 	result := ""
 	for _, s := range stacks {
-		result += string(s.pop())
+		result += string(s.Pop())
 	}
 
-	slog.Info("Part 2", slog.Any("result", result))
+	return result
+}
+
+func (c *Command) parseStacks(input string) []Stack {
+	stacks := []Stack{}
+
+	parts := strings.Split(input, "\n\n")
+	lines := strings.Split(parts[0], "\n")
+
+	// Needed as we need to know the number of stacks
+	size := len(strings.Fields(lines[len(lines)-1]))
+	for i := 0; i < size; i++ {
+		stacks = append(stacks, Stack{})
+	}
+
+	for _, line := range lines[:len(lines)-1] {
+		for i, r := range line {
+			if r != ' ' && r != '[' && r != ']' {
+				stacks[i/4].AddToBottom(r)
+			}
+		}
+	}
+
+	return stacks
 }
