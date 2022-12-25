@@ -70,7 +70,7 @@ const part2 = (parsedInput: string[][]) => {
   console.log("Part 2:", result);
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   const parsedInput = rawInput
     .split("\n\n")
     .map((p) => p.split("\n"));

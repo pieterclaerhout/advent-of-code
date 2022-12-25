@@ -1,11 +1,15 @@
 const parseInput = (rawInput: string): number[] => {
   return rawInput
     .split("\n\n")
-    .map((chunk) => chunk.split("\n").map((v) => +v).reduce((p, c) => p + c))
+    .map((chunk) =>
+      chunk.split("\n")
+        .map((v) => +v)
+        .reduce((p, c) => p + c)
+    )
     .sort((a, b) => b - a);
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   const caloriesPerElf = parseInput(rawInput);
 
   const highest = caloriesPerElf[0];

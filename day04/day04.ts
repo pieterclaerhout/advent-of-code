@@ -31,7 +31,7 @@ const part2 = (parsedInput: Pair[]) => {
   console.log("Part 2:", result);
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   const parsedInput = rawInput
     .split("\n")
     .map((v) => v.split(",").map((r) => r.split("-").map((s) => +s)) as Pair);

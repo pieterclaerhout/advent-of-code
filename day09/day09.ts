@@ -57,7 +57,7 @@ const part2 = (parsedInput: StepsWithDirection[]) => {
   console.log("Part 2:", tailGrids.size);
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   const parsedInput = parseInput(rawInput);
 
   part1(parsedInput);

@@ -62,7 +62,7 @@ const part2 = (parsedInput: Operation[]) => {
   console.log("Part 2:\n" + result);
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   const parsedInput = parseInput(rawInput);
 
   part1(parsedInput);

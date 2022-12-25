@@ -1,5 +1,3 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 const part1 = (rawInput: string): void => {
   type Player = {
     pos: number[];
@@ -456,7 +454,7 @@ const part2 = (rawInput: string): void => {
 
   console.log("Part 2:", answer);
 };
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   part1(rawInput);
   part2(rawInput);
 }

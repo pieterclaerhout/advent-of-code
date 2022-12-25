@@ -29,7 +29,7 @@ const part2 = (parsedInput: string[]) => {
   console.log("Part 2:", prioritySum);
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   const parsedInput = rawInput.split("\n");
 
   part1(parsedInput);

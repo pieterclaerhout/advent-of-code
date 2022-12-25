@@ -59,7 +59,7 @@ const part2 = (parsedInput: Map<string, number>) => {
   console.log("Part 2:", closestSize);
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   const parsedInput = parseInput(rawInput);
 
   part1(parsedInput);

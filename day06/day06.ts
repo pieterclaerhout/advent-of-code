@@ -12,7 +12,7 @@ const findUniqueCharsPosition = (chars: string[], setSize: number) => {
   throw "failed";
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   const parsedInput = rawInput.split("");
 
   console.log("Part 1:", findUniqueCharsPosition(parsedInput, 4));

@@ -128,7 +128,7 @@ const part2 = (rawInput: string) => {
   console.log("Part 2:", surfaceArea);
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   part1(rawInput);
   part2(rawInput);
 }

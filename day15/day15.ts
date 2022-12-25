@@ -1,5 +1,3 @@
-import { readFileSync } from "../utils/readfile.ts";
-
 const parseInput = (rawInput: string) =>
   rawInput
     .split("\n")
@@ -111,7 +109,7 @@ const part2 = (rawInput: string) => {
   }
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   part1(rawInput);
   part2(rawInput);
 }

@@ -228,7 +228,7 @@ const solvePart2 = (rawInput: string): number => {
   return maxFlow;
 };
 
-export default function (_inputPath: string, rawInput: string) {
+export default function (rawInput: string) {
   console.log("Part 1:", solvePart1(rawInput));
   console.log("Part 2:", solvePart2(rawInput));
 }

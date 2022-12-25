@@ -1,3 +1,5 @@
+#!/usr/bin/env deno --allow-read
+
 if (import.meta.main) {
   try {
     const day = Deno.args[0];
