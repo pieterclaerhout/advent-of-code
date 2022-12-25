@@ -1,4 +1,4 @@
-#!/usr/bin/env deno --allow-read
+#!/usr/bin/env -S deno run --allow-read
 
 if (import.meta.main) {
   try {
