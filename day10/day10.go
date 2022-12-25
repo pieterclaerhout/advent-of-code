@@ -9,7 +9,6 @@ import (
 type Command struct{}
 
 func (cmd *Command) Execute(input string) (interface{}, interface{}) {
-
 	w := 40
 
 	c := 0

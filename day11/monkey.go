@@ -1,6 +1,6 @@
 package day11
 
-type Monkey struct {
+type MonkeyOld struct {
 	Items        []int
 	Operation    func(int) int
 	TestAndThrow func(int) int
