@@ -1,28 +1,46 @@
 package day01
 
 import (
-	_ "embed"
-
-	"golang.org/x/exp/slog"
+	"sort"
+	"strconv"
+	"strings"
 )
-
-//go:embed input.txt
-var input string
 
 type Command struct {
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
+func (c *Command) Execute(input string) (interface{}, interface{}) {
+	calories := c.parse((input))
+
+	max := calories[0]
+	top3 := c.sum(calories, 3)
+
+	return max, top3
 }
 
-func (c *Command) part1() {
-	calories := NewIntSlice(input)
-	slog.Info("Max calories", slog.Any("max", calories.Max()))
+func (c *Command) parse(input string) []int {
+	result := []int{}
+
+	for _, chunk := range strings.Split(input, "\n\n") {
+		chunkSum := 0
+
+		for _, line := range strings.Split(chunk, "\n") {
+			value, _ := strconv.Atoi(line)
+			chunkSum += value
+		}
+
+		result = append(result, chunkSum)
+	}
+
+	sort.Sort(sort.Reverse(sort.IntSlice(result)))
+
+	return result
 }
 
-func (c *Command) part2() {
-	calories := NewIntSlice(input)
-	slog.Info("Sum", slog.Any("sum", calories.SumTop(3)))
+func (c *Command) sum(ints []int, count int) int {
+	sum := 0
+	for i := 0; i < len(ints) && i < count; i++ {
+		sum += ints[i]
+	}
+	return sum
 }
