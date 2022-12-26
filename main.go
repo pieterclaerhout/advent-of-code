@@ -57,6 +57,11 @@ func main() {
 		// &day25.Command{},
 	}
 
+	if *day == 0 {
+		flag.PrintDefaults()
+		return
+	}
+
 	if *day > len(commands) {
 		fmt.Println("Command not found: day", *day)
 		return
