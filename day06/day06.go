@@ -3,7 +3,7 @@ package day06
 type Command struct {
 }
 
-func (c *Command) Execute(input string) (interface{}, interface{}) {
+func (c *Command) Execute(input string) (any, any) {
 	return c.firstStartOfPackage(input, 4), c.firstStartOfPackage(input, 14)
 }
 

@@ -8,7 +8,7 @@ import (
 type Command struct {
 }
 
-func (c *Command) Execute(input string) (interface{}, interface{}) {
+func (c *Command) Execute(input string) (any, any) {
 	return c.part1(input), c.part2(input)
 }
 

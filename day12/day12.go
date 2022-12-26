@@ -8,7 +8,7 @@ import (
 type Command struct {
 }
 
-func (cmd *Command) Execute(input string) (interface{}, interface{}) {
+func (cmd *Command) Execute(input string) (any, any) {
 
 	var start, end image.Point
 	height := map[image.Point]rune{}

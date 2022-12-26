@@ -23,7 +23,7 @@ const template = `Monkey %d:
 
 type Command struct{}
 
-func (cmd *Command) Execute(input string) (interface{}, interface{}) {
+func (cmd *Command) Execute(input string) (any, any) {
 	split := strings.Split(input, "\n\n")
 
 	monkeys, lcm := make([]Monkey, len(split)), 1

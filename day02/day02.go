@@ -7,7 +7,7 @@ import (
 type Command struct {
 }
 
-func (c *Command) Execute(input string) (interface{}, interface{}) {
+func (c *Command) Execute(input string) (any, any) {
 	return c.calculateScore(input, c.scoresPart1()), c.calculateScore(input, c.scoresPart2())
 }
 

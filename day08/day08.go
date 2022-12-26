@@ -9,7 +9,7 @@ import (
 type Command struct {
 }
 
-func (c *Command) Execute(input string) (interface{}, interface{}) {
+func (c *Command) Execute(input string) (any, any) {
 	trees := map[image.Point]int{}
 	for y, s := range strings.Fields(input) {
 		for x, r := range s {

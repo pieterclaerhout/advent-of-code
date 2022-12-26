@@ -8,7 +8,7 @@ import (
 
 type Command struct{}
 
-func (cmd *Command) Execute(input string) (interface{}, interface{}) {
+func (cmd *Command) Execute(input string) (any, any) {
 	w := 40
 
 	c := 0

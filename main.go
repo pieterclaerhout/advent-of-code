@@ -19,12 +19,13 @@ import (
 	"github.com/pieterclaerhout/advent-of-code/day10"
 	"github.com/pieterclaerhout/advent-of-code/day11"
 	"github.com/pieterclaerhout/advent-of-code/day12"
+	"github.com/pieterclaerhout/advent-of-code/day13"
 )
 
 var day = flag.Int("day", 0, "day to execute")
 
 type Command interface {
-	Execute(input string) (interface{}, interface{})
+	Execute(input string) (any, any)
 }
 
 func main() {
@@ -43,7 +44,7 @@ func main() {
 		&day10.Command{},
 		&day11.Command{},
 		&day12.Command{},
-		// &day13.Command{},
+		&day13.Command{},
 		// &day14.Command{},
 		// &day15.Command{},
 		// &day16.Command{},

@@ -9,7 +9,7 @@ import (
 type Command struct {
 }
 
-func (c *Command) Execute(input string) (interface{}, interface{}) {
+func (c *Command) Execute(input string) (any, any) {
 
 	fs, cd := map[string]int{}, ""
 	for _, s := range strings.Split(input, "\n") {

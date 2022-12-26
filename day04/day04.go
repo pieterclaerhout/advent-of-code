@@ -21,7 +21,7 @@ func (r1 Range) Overlap(r2 Range) bool {
 type Command struct {
 }
 
-func (c *Command) Execute(input string) (interface{}, interface{}) {
+func (c *Command) Execute(input string) (any, any) {
 	ranges := c.parse(input)
 
 	return c.part1(ranges), c.part2(ranges)

@@ -7,7 +7,7 @@ import (
 type Command struct {
 }
 
-func (c *Command) Execute(input string) (interface{}, interface{}) {
+func (c *Command) Execute(input string) (any, any) {
 	lines := strings.Split(input, "\n")
 	return c.part1(lines), c.part2(lines)
 }
