@@ -1,58 +1,55 @@
 package day15
 
 import (
-	"bufio"
-	_ "embed"
 	"fmt"
+	"image"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
-
 type Command struct {
+	Row1 int
+	Row2 int
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
-}
+func (cmd *Command) Execute(input string) (any, any) {
+	sensors := map[image.Point]int{}
+	line := map[int]struct{}{}
 
-func (c *Command) part1() {
-	sensors := c.parse()
-	slog.Info("Part 1", slog.Any("result", sensors.Coverage(2000000)))
-}
+	for _, s := range strings.Split(input, "\n") {
+		var a, b image.Point
+		fmt.Sscanf(s, "Sensor at x=%d, y=%d: closest beacon is at x=%d, y=%d", &a.X, &a.Y, &b.X, &b.Y)
 
-func (c *Command) part2() {
-	sensors := c.parse()
-	slog.Info("Part 2", slog.Any("result", sensors.Coverage2D(4000000)))
-}
+		sensors[a] = abs(a.X-b.X) + abs(a.Y-b.Y)
+		d := sensors[a] - abs(cmd.Row1-a.Y)
 
-func (c *Command) parse() Sensors {
-	sensors := Sensors{}
-
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		sensor := Sensor{
-			Position: Point{},
-			Beacon:   Point{},
+		for x := a.X - d; x <= a.X+d; x++ {
+			if !(b.X == x && b.Y == cmd.Row1) {
+				line[x] = struct{}{}
+			}
 		}
-
-		fmt.Sscanf(
-			sc.Text(),
-			"Sensor at x=%d, y=%d: closest beacon is at x=%d, y=%d",
-			&sensor.Position.X,
-			&sensor.Position.Y,
-			&sensor.Beacon.X,
-			&sensor.Beacon.Y,
-		)
-
-		sensors = append(sensors, sensor)
 	}
 
-	return sensors
+	part1 := len(line)
+
+	for y := 0; y <= cmd.Row2; y++ {
+	loop:
+		for x := 0; x <= cmd.Row2; x++ {
+			for s, d := range sensors {
+				if dx, dy := s.X-x, s.Y-y; abs(dx)+abs(dy) <= d {
+					x += d - abs(dy) + dx
+					continue loop
+				}
+			}
+			return part1, x*4000000 + y
+		}
+	}
+
+	return part1, 0
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }

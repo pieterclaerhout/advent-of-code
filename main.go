@@ -21,6 +21,8 @@ import (
 	"github.com/pieterclaerhout/advent-of-code/day12"
 	"github.com/pieterclaerhout/advent-of-code/day13"
 	"github.com/pieterclaerhout/advent-of-code/day14"
+	"github.com/pieterclaerhout/advent-of-code/day15"
+	"github.com/pieterclaerhout/advent-of-code/day16"
 )
 
 var day = flag.Int("day", 0, "day to execute")
@@ -47,8 +49,8 @@ func main() {
 		&day12.Command{},
 		&day13.Command{},
 		&day14.Command{},
-		// &day15.Command{},
-		// &day16.Command{},
+		&day15.Command{Row1: 2000000, Row2: 4000000},
+		&day16.Command{},
 		// &day17.Command{},
 		// &day18.Command{},
 		// &day19.Command{},
