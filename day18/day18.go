@@ -1,54 +1,89 @@
 package day18
 
 import (
-	"bufio"
-	_ "embed"
 	"fmt"
+	"math"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
-
-type Command struct {
+type Point struct {
+	X, Y, Z int
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
+func (p Point) Add(q Point) Point {
+	return Point{p.X + q.X, p.Y + q.Y, p.Z + q.Z}
 }
 
-func (c *Command) part1() {
-	cubes := c.parse()
-	_, area := cubes.BuildMap()
-	slog.Info("Part 1", slog.Any("result", area))
-}
+type Command struct{}
 
-func (c *Command) part2() {
-	cubes := c.parse()
-	cubesMap := cubes.BuildMap3D()
-	cubesMap.DfsSearch(Cube{0, 0, 0})
-	area := cubesMap.Area()
-	slog.Info("Part 2", slog.Any("result", area))
-}
+func (cmd *Command) Execute(input string) (any, any) {
 
-func (c *Command) parse() Cubes {
-	cubes := Cubes{}
+	lava := map[Point]struct{}{}
+	min := Point{math.MaxInt, math.MaxInt, math.MaxInt}
+	max := Point{math.MinInt, math.MinInt, math.MinInt}
 
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
+	for _, s := range strings.Split(input, "\n") {
+		var p Point
+		fmt.Sscanf(s, "%d,%d,%d", &p.X, &p.Y, &p.Z)
+		lava[p] = struct{}{}
 
-	for sc.Scan() {
-		cube := Cube{}
-		fmt.Sscanf(sc.Text(), "%d,%d,%d",
-			&cube.X,
-			&cube.Y,
-			&cube.Z,
-		)
-		cubes = append(cubes, cube)
+		min = Point{Min(min.X, p.X), Min(min.Y, p.Y), Min(min.Z, p.Z)}
+		max = Point{Max(max.X, p.X), Max(max.Y, p.Y), Max(max.Z, p.Z)}
 	}
 
-	return cubes
+	min = min.Add(Point{-1, -1, -1})
+	max = max.Add(Point{1, 1, 1})
+
+	delta := []Point{
+		{-1, 0, 0}, {0, -1, 0}, {0, 0, -1},
+		{1, 0, 0}, {0, 1, 0}, {0, 0, 1},
+	}
+
+	part1 := 0
+	for p := range lava {
+		for _, d := range delta {
+			if _, ok := lava[p.Add(d)]; !ok {
+				part1++
+			}
+		}
+	}
+
+	queue := []Point{min}
+	visited := map[Point]struct{}{min: {}}
+
+	part2 := 0
+	for len(queue) > 0 {
+		cur := queue[0]
+		queue = queue[1:]
+
+		for _, d := range delta {
+			next := cur.Add(d)
+
+			if _, ok := lava[next]; ok {
+				part2++
+			} else if _, ok := visited[next]; !ok &&
+				next.X >= min.X && next.X <= max.X &&
+				next.Y >= min.Y && next.Y <= max.Y &&
+				next.Z >= min.Z && next.Z <= max.Z {
+				visited[next] = struct{}{}
+				queue = append(queue, next)
+			}
+		}
+	}
+
+	return part1, part2
+}
+
+func Min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func Max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
