@@ -1,52 +1,66 @@
 package day14
 
 import (
-	"bufio"
-	_ "embed"
+	"fmt"
+	"image"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
+type Command struct{}
 
-type Command struct {
-}
+func (cmd *Command) Execute(input string) (any, any) {
+	rock := map[image.Point]struct{}{}
+	maxy := 0
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
-}
+	for _, s := range strings.Split(input, "\n") {
+		s := strings.Split(s, " -> ")
 
-func (c *Command) part1() {
-	caveMap := c.parse()
-	slog.Info("Part 1", slog.Any("result", caveMap.simulateFallingSand()))
-}
+		for i := 0; i < len(s)-1; i++ {
+			var p, q image.Point
+			fmt.Sscanf(s[i], "%d,%d", &p.X, &p.Y)
+			fmt.Sscanf(s[i+1], "%d,%d", &q.X, &q.Y)
 
-func (c *Command) part2() {
-	caveMap := c.parse()
-	slog.Info("Part 2", slog.Any("result", caveMap.simulateBlockSource()))
-}
-
-func (c *Command) parse() CaveMap {
-	caveMap := make(CaveMap, 1000)
-	for i := range caveMap {
-		caveMap[i] = make([]bool, 1000)
-	}
-
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		points := strings.Split(sc.Text(), " -> ")
-		pStart := strings.Split(points[0], ",")
-		for i := range points[1:] {
-			pNext := strings.Split(points[i+1], ",")
-			caveMap.draw(pStart, pNext)
-			pStart = pNext
+			for d := (image.Point{sgn(q.X - p.X), sgn(q.Y - p.Y)}); p != q.Add(d); p = p.Add(d) {
+				rock[p] = struct{}{}
+				if p.Y > maxy {
+					maxy = p.Y
+				}
+			}
 		}
 	}
 
-	return caveMap
+	d := []image.Point{{0, 1}, {-1, 1}, {1, 1}}
+
+	part1 := (*int)(nil)
+	part2 := 0
+	for {
+		p := image.Point{500, 0}
+
+		for i := 0; i < len(d); i++ {
+			if _, ok := rock[p.Add(d[i])]; !ok && p.Add(d[i]).Y < maxy+2 {
+				p = p.Add(d[i])
+				if c := part2; part1 == nil && p.Y >= maxy {
+					part1 = &c
+				}
+				i = -1
+			}
+		}
+
+		rock[p] = struct{}{}
+		part2++
+		if p.Y == 0 {
+			break
+		}
+	}
+
+	return *part1, part2
+}
+
+func sgn(i int) int {
+	if i < 0 {
+		return -1
+	} else if i > 0 {
+		return 1
+	}
+	return 0
 }
