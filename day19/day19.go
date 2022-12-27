@@ -1,63 +1,201 @@
 package day19
 
 import (
-	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
 type Command struct{}
 
 func (c *Command) Execute(input string) (any, any) {
-	return c.part1(input), c.part2(input)
+	lines := strings.Split(input, "\n")
+	part1 := 0
+	for _, line := range lines {
+		blueprint := parse(line)
+		s := search(blueprint, 24)
+		part1 += blueprint.id * s
+	}
+
+	if len(lines) > 3 {
+		lines = lines[:3]
+	}
+	part2 := 1
+	for _, line := range lines {
+		// parse input
+		blueprint := parse(line)
+
+		// compute solution
+		s := search(blueprint, 32)
+		part2 *= s
+	}
+
+	return part1, part2
 }
 
-func (c *Command) part1(input string) int {
-	blueprints := c.parse(input)
+type material int
 
-	solution := 0
-	for id, bprint := range blueprints {
-		st := NewState(bprint)
-		geodes := st.Dfs(0, Resources{}, Resources{Ores: 1}, Resources{})
+const (
+	ore material = iota
+	clay
+	obsidian
+	geode
+)
 
-		qualityLevel := (id + 1) * geodes
-		solution += qualityLevel
-	}
-
-	return solution
+type blueprint struct {
+	id    int
+	rules map[material][]rule
+	max   map[material]int
 }
 
-func (c *Command) part2(input string) int {
-	blueprints := c.parse(input)
-	if len(blueprints) > 3 {
-		blueprints = blueprints[0:3]
-	}
-	solution := 1
-	for _, bprint := range blueprints {
-		st := NewState(bprint)
-		st.MaxMinutes = 32
-		geodes := st.Dfs(0, Resources{}, Resources{Ores: 1}, Resources{})
-
-		solution *= geodes
-	}
-	return solution
+type rule struct {
+	needed material
+	amount int
 }
 
-func (c *Command) parse(input string) []Blueprint {
+func MustAtoi(input string) int {
+	result, _ := strconv.Atoi(input)
+	return result
+}
 
-	blueprints := []Blueprint{}
+func Max(a int, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
 
-	for _, line := range strings.Split(input, "\n") {
-
-		var bID, oreOre, clayOre, obsidianOre, obsidianClay, geodeOre, geodeObsidian int
-		fmt.Sscanf(line, "Blueprint %d: Each ore robot costs %d ore. Each clay robot costs %d ore. Each obsidian robot costs %d ore and %d clay. Each geode robot costs %d ore and %d obsidian.", &bID, &oreOre, &clayOre, &obsidianOre, &obsidianClay, &geodeOre, &geodeObsidian)
-
-		blueprints = append(blueprints, Blueprint{
-			{oreOre, 0, 0, 0},
-			{clayOre, 0, 0, 0},
-			{obsidianOre, obsidianClay, 0, 0},
-			{geodeOre, 0, geodeObsidian, 0},
-		})
+func parse(line string) blueprint {
+	re1 := regexp.MustCompile(`Blueprint (\d+):`)
+	re2 := regexp.MustCompile(`Each ([a-z]+) robot costs (\d+) ([a-z]+)[.]`)
+	re3 := regexp.MustCompile(`Each ([a-z]+) robot costs (\d+) ([a-z]+) and (\d+) ([a-z]+)[.]`)
+	id := re1.FindStringSubmatch(line)
+	b := blueprint{
+		id:    MustAtoi(id[1]),
+		rules: map[material][]rule{},
+		max:   map[material]int{},
+	}
+	pieces := re2.FindAllStringSubmatch(line, -1)
+	for _, piece := range pieces {
+		r := []rule{{amount: MustAtoi(piece[2]), needed: parseMaterial(piece[3])}}
+		b.rules[parseMaterial(piece[1])] = r
+	}
+	pieces = re3.FindAllStringSubmatch(line, -1)
+	for _, piece := range pieces {
+		r := []rule{{amount: MustAtoi(piece[2]), needed: parseMaterial(piece[3])},
+			{amount: MustAtoi(piece[4]), needed: parseMaterial(piece[5])}}
+		b.rules[parseMaterial(piece[1])] = r
 	}
 
-	return blueprints
+	return b
+}
+
+func parseMaterial(n string) material {
+	switch n {
+	case "ore":
+		return ore
+	case "clay":
+		return clay
+	case "obsidian":
+		return obsidian
+	case "geode":
+		return geode
+	default:
+		panic("bad input")
+	}
+}
+
+type state struct {
+	robots     [4]int
+	production [4]int
+}
+
+// DFS search. Keep track of best known solution to prune search space. Also
+// don't revisit states and prune states with too many robots of the same kind.
+func search(blueprint blueprint, minutes int) int {
+	best := 0
+	robots := [4]int{1, 0, 0, 0}
+	production := [4]int{0, 0, 0, 0}
+	seen := map[state]int{}
+
+	for _, rules := range blueprint.rules {
+		for _, rule := range rules {
+			blueprint.max[rule.needed] = Max(blueprint.max[rule.needed], rule.amount)
+		}
+	}
+
+	search2(blueprint, minutes, robots, production, seen, &best)
+	return int(best)
+}
+
+func search2(blueprint blueprint, minutes int, robots [4]int, production [4]int, seen map[state]int, best *int) {
+	if minutes == 0 {
+		if production[geode] > *best {
+			*best = production[geode]
+		}
+		return
+	}
+
+	// check if this search needs to be pruned. We severly overestimate (since it's not possible)
+	// to build a geode robot every minute. A better estimation will speed things up!
+	r := robots[geode]
+	p := production[geode]
+	for m := 0; m < minutes; m++ {
+		r++
+		p += r
+		if p > *best {
+			break
+		}
+	}
+	if p <= *best {
+		return
+	}
+
+	// reject wasteful states
+	for i := ore; i <= obsidian; i++ {
+		if robots[i] > blueprint.max[i] {
+			return
+		}
+	}
+
+	// cache states we have already visited
+	t := state{robots, production}
+	v, ok := seen[t]
+	if ok && v >= minutes {
+		return
+	}
+	seen[t] = minutes
+
+	// search all possibilities
+outer:
+	for m := geode; m >= ore; m-- {
+		rules := blueprint.rules[m]
+		for _, rule := range rules {
+			if production[rule.needed] < rule.amount {
+				continue outer
+			}
+		}
+
+		newProduction := [4]int{}
+		copy(newProduction[:], production[:])
+		for _, rule := range rules {
+			newProduction[rule.needed] -= rule.amount
+		}
+		for i := 0; i < 4; i++ {
+			newProduction[i] += robots[i]
+		}
+		newRobots := [4]int{}
+		copy(newRobots[:], robots[:])
+		newRobots[m]++
+
+		search2(blueprint, minutes-1, newRobots, newProduction, seen, best)
+	}
+
+	newProduction := [4]int{}
+	copy(newProduction[:], production[:])
+	for i := 0; i < 4; i++ {
+		newProduction[i] += robots[i]
+	}
+
+	search2(blueprint, minutes-1, robots, newProduction, seen, best)
 }
