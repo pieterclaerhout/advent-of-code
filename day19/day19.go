@@ -1,16 +1,11 @@
 package day19
 
 import (
-	_ "embed"
 	"fmt"
 	"strings"
 )
 
-//go:embed input.txt
-var input string
-
-type Command struct {
-}
+type Command struct{}
 
 func (c *Command) Execute(input string) (any, any) {
 	return c.part1(input), c.part2(input)
@@ -36,7 +31,6 @@ func (c *Command) part2(input string) int {
 	if len(blueprints) > 3 {
 		blueprints = blueprints[0:3]
 	}
-
 	solution := 1
 	for _, bprint := range blueprints {
 		st := NewState(bprint)
