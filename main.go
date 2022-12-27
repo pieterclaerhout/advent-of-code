@@ -25,6 +25,7 @@ import (
 	"github.com/pieterclaerhout/advent-of-code/day16"
 	"github.com/pieterclaerhout/advent-of-code/day17"
 	"github.com/pieterclaerhout/advent-of-code/day18"
+	"github.com/pieterclaerhout/advent-of-code/day19"
 	"github.com/pieterclaerhout/advent-of-code/day20"
 )
 
@@ -56,7 +57,7 @@ func main() {
 		&day16.Command{},
 		&day17.Command{},
 		&day18.Command{},
-		// &day19.Command{},
+		&day19.Command{},
 		&day20.Command{},
 		// &day21.Command{},
 		// &day22.Command{},
