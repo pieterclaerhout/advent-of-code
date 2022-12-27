@@ -1,12 +1,9 @@
 package day19
 
 import (
-	"bufio"
 	_ "embed"
 	"fmt"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
 //go:embed input.txt
@@ -15,13 +12,12 @@ var input string
 type Command struct {
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
+func (c *Command) Execute(input string) (any, any) {
+	return c.part1(input), c.part2(input)
 }
 
-func (c *Command) part1() {
-	blueprints := c.parse()
+func (c *Command) part1(input string) int {
+	blueprints := c.parse(input)
 
 	solution := 0
 	for id, bprint := range blueprints {
@@ -32,11 +28,11 @@ func (c *Command) part1() {
 		solution += qualityLevel
 	}
 
-	slog.Info("Part 1", slog.Any("result", solution))
+	return solution
 }
 
-func (c *Command) part2() {
-	blueprints := c.parse()
+func (c *Command) part2(input string) int {
+	blueprints := c.parse(input)
 	if len(blueprints) > 3 {
 		blueprints = blueprints[0:3]
 	}
@@ -49,21 +45,17 @@ func (c *Command) part2() {
 
 		solution *= geodes
 	}
-
-	slog.Info("Part 2", slog.Any("result", solution))
+	return solution
 }
 
-func (c *Command) parse() []Blueprint {
+func (c *Command) parse(input string) []Blueprint {
 
 	blueprints := []Blueprint{}
 
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
+	for _, line := range strings.Split(input, "\n") {
 
 		var bID, oreOre, clayOre, obsidianOre, obsidianClay, geodeOre, geodeObsidian int
-		fmt.Sscanf(sc.Text(), "Blueprint %d: Each ore robot costs %d ore. Each clay robot costs %d ore. Each obsidian robot costs %d ore and %d clay. Each geode robot costs %d ore and %d obsidian.", &bID, &oreOre, &clayOre, &obsidianOre, &obsidianClay, &geodeOre, &geodeObsidian)
+		fmt.Sscanf(line, "Blueprint %d: Each ore robot costs %d ore. Each clay robot costs %d ore. Each obsidian robot costs %d ore and %d clay. Each geode robot costs %d ore and %d obsidian.", &bID, &oreOre, &clayOre, &obsidianOre, &obsidianClay, &geodeOre, &geodeObsidian)
 
 		blueprints = append(blueprints, Blueprint{
 			{oreOre, 0, 0, 0},

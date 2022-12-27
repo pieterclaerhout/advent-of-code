@@ -1,61 +1,38 @@
 package day20
 
 import (
-	"bufio"
-	_ "embed"
+	"container/ring"
 	"strconv"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
+type Command struct{}
 
-type Command struct {
+func (cmd *Command) Execute(input string) (any, any) {
+	part1 := mix(string(input), 1, 1)
+	part2 := mix(string(input), 811589153, 10)
+	return part1, part2
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
-}
+func mix(input string, key, times int) int {
+	split := strings.Fields(input)
 
-func (c *Command) part1() {
-	input, indexes := c.parse()
-
-	mixedInput, _ := Mix(input, indexes, 1)
-
-	slog.Info("Part 1", slog.Any("result", Sum(mixedInput, 1)))
-}
-
-func (c *Command) part2() {
-	const decryptionKey = 811589153
-
-	input, indexes := c.parse()
-
-	for r := 0; r < 10; r++ {
-		input, indexes = Mix(input, indexes, decryptionKey)
+	r, idx, z := ring.New(len(split)), map[int]*ring.Ring{}, (*ring.Ring)(nil)
+	for i, s := range split {
+		v, _ := strconv.Atoi(s)
+		if v == 0 {
+			z = r
+		}
+		r.Value, idx[i], r = v*key, r, r.Next()
 	}
 
-	slog.Info("Part 2", slog.Any("result", Sum(input, decryptionKey)))
-
-}
-
-func (c *Command) parse() ([]int, []int) {
-	numbers := []int{}
-
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		number, _ := strconv.Atoi(sc.Text())
-		numbers = append(numbers, number)
+	for i := 0; i < times; i++ {
+		for i := 0; i < len(idx); i++ {
+			r = idx[i].Prev()
+			c := r.Unlink(1)
+			r.Move(c.Value.(int) % (len(idx) - 1)).Link(c)
+		}
 	}
 
-	indexes := make([]int, len(numbers))
-	for i := range numbers {
-		indexes[i] = i
-	}
-
-	return numbers, indexes
+	return z.Move(1000).Value.(int) + z.Move(2000).Value.(int) + z.Move(3000).Value.(int)
 }
