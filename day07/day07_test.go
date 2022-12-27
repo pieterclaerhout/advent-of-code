@@ -31,7 +31,7 @@ $ ls
 5626152 d.ext
 7214296 k`
 
-func TestDay4(t *testing.T) {
+func Test_Command(t *testing.T) {
 	cmd := day07.Command{}
 	result1, result2 := cmd.Execute(input)
 

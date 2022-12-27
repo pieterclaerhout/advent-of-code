@@ -35,7 +35,7 @@ Monkey 3:
     If true: throw to monkey 0
     If false: throw to monkey 1`
 
-func TestDay4(t *testing.T) {
+func Test_Command(t *testing.T) {
 	cmd := day11.Command{}
 	result1, result2 := cmd.Execute(input)
 

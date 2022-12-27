@@ -31,7 +31,7 @@ const input = `[1,1,3,1,1]
 [1,[2,[3,[4,[5,6,7]]]],8,9]
 [1,[2,[3,[4,[5,6,0]]]],8,9]`
 
-func TestDay4(t *testing.T) {
+func Test_Command(t *testing.T) {
 	cmd := day13.Command{}
 	result1, result2 := cmd.Execute(input)
 

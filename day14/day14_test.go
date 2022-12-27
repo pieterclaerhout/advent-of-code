@@ -10,7 +10,7 @@ import (
 const input = `498,4 -> 498,6 -> 496,6
 503,4 -> 502,4 -> 502,9 -> 494,9`
 
-func TestDay4(t *testing.T) {
+func Test_Command(t *testing.T) {
 	cmd := day14.Command{}
 	result1, result2 := cmd.Execute(input)
 

@@ -14,7 +14,7 @@ const input = `2-4,6-8
 6-6,4-6
 2-6,4-8`
 
-func TestDay4(t *testing.T) {
+func Test_Command(t *testing.T) {
 	cmd := day04.Command{}
 	result1, result2 := cmd.Execute(input)
 

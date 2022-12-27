@@ -13,7 +13,7 @@ const input = `30373
 33549
 35390`
 
-func TestDay4(t *testing.T) {
+func Test_Command(t *testing.T) {
 	cmd := day08.Command{}
 	result1, result2 := cmd.Execute(input)
 

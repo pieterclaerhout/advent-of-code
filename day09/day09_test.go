@@ -16,7 +16,7 @@ D 1
 L 5
 R 2`
 
-func TestDay4(t *testing.T) {
+func Test_Command(t *testing.T) {
 	cmd := day09.Command{}
 	result1, result2 := cmd.Execute(input)
 

@@ -13,7 +13,7 @@ accszExk
 acctuvwj
 abdefghi`
 
-func TestDay4(t *testing.T) {
+func Test_Command(t *testing.T) {
 	cmd := day12.Command{}
 	result1, result2 := cmd.Execute(input)
 
