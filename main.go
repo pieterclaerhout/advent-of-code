@@ -31,6 +31,7 @@ import (
 	"github.com/pieterclaerhout/advent-of-code/day22"
 	"github.com/pieterclaerhout/advent-of-code/day23"
 	"github.com/pieterclaerhout/advent-of-code/day24"
+	"github.com/pieterclaerhout/advent-of-code/day25"
 )
 
 var day = flag.Int("day", 0, "day to execute")
@@ -67,7 +68,7 @@ func main() {
 		&day22.Command{},
 		&day23.Command{},
 		&day24.Command{},
-		// &day25.Command{},
+		&day25.Command{},
 	}
 
 	if *day == 0 {

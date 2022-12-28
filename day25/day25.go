@@ -1,27 +1,19 @@
 package day25
 
 import (
-	_ "embed"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
+type Command struct{}
 
-type Command struct {
+func (cmd *Command) Execute(input string) (any, any) {
+	sum := cmd.snafuToDecimal(input)
+	snafu := cmd.decimalToSnafu(sum)
+
+	return sum, snafu
 }
 
-func (c *Command) Execute() {
-	sum := c.snafuToDecimal(input)
-	slog.Info("Part 1", slog.Any("result", sum))
-
-	snafu := c.decimalToSnafu(sum)
-	slog.Info("Part 2", slog.Any("result", snafu))
-}
-
-func (c *Command) snafuToDecimal(input string) int {
+func (cmd *Command) snafuToDecimal(input string) int {
 	mapping := map[rune]int{
 		'=': -2,
 		'-': -1,
@@ -42,7 +34,7 @@ func (c *Command) snafuToDecimal(input string) int {
 	return sum
 }
 
-func (c *Command) decimalToSnafu(sum int) string {
+func (cmd *Command) decimalToSnafu(sum int) string {
 	mapping := []string{"=", "-", "0", "1", "2"}
 
 	snafu := ""
