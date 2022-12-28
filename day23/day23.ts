@@ -143,9 +143,10 @@ class Board {
   };
 }
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, number] {
   const board = new Board(200, rawInput.split("\n"));
-
-  console.log("Part 1:", board.resultPart1);
-  console.log("Part 2:", board.resultPart2);
+  return [
+    board.resultPart1,
+    board.resultPart2,
+  ];
 }

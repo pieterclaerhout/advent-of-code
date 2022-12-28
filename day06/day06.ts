@@ -1,4 +1,4 @@
-const findUniqueCharsPosition = (chars: string[], setSize: number) => {
+const findUniqueCharsPosition = (chars: string[], setSize: number): number => {
   const lastChars: string[] = [];
   for (let i = 0; i < chars.length; i++) {
     lastChars.push(chars[i]);
@@ -12,9 +12,11 @@ const findUniqueCharsPosition = (chars: string[], setSize: number) => {
   throw "failed";
 };
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, number] {
   const parsedInput = rawInput.split("");
 
-  console.log("Part 1:", findUniqueCharsPosition(parsedInput, 4));
-  console.log("Part 2:", findUniqueCharsPosition(parsedInput, 14));
+  return [
+    findUniqueCharsPosition(parsedInput, 4),
+    findUniqueCharsPosition(parsedInput, 14),
+  ];
 }

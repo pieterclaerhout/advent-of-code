@@ -109,7 +109,7 @@ const part1 = (rawInput: string) => {
     );
   };
 
-  console.log("Part 1:", evaluateMonkey("root"));
+  return evaluateMonkey("root");
 };
 
 const part2 = (rawInput: string) => {
@@ -173,10 +173,9 @@ const part2 = (rawInput: string) => {
     return humanConstant;
   };
 
-  console.log("Part 2:", evaluateHumanConstant());
+  return evaluateHumanConstant();
 };
 
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }

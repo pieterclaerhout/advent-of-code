@@ -9,7 +9,7 @@ const parseInput = (rawInput: string): Operation[] => {
     });
 };
 
-const part1 = (parsedInput: Operation[]) => {
+const part1 = (parsedInput: Operation[]): number => {
   let cycle = 1;
   let x = 1;
   let signalSum = 0;
@@ -32,10 +32,10 @@ const part1 = (parsedInput: Operation[]) => {
     checkStrength();
   }
 
-  console.log("Part 1:", signalSum);
+  return signalSum;
 };
 
-const part2 = (parsedInput: Operation[]) => {
+const part2 = (parsedInput: Operation[]): string => {
   let cycle = 1;
   let x = 1;
 
@@ -58,13 +58,11 @@ const part2 = (parsedInput: Operation[]) => {
     x += val;
   }
 
-  const result = screen.map((row) => row.join("")).join("\n");
-  console.log("Part 2:\n" + result);
+  return "\n" + screen.map((row) => row.join("")).join("\n");
 };
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, string] {
   const parsedInput = parseInput(rawInput);
 
-  part1(parsedInput);
-  part2(parsedInput);
+  return [part1(parsedInput), part2(parsedInput)];
 }

@@ -1,6 +1,6 @@
 const items = [..." abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
-const part1 = (parsedInput: string[]) => {
+const part1 = (parsedInput: string[]): number => {
   const input = parsedInput
     .map((v) => [
       v.slice(0, v.length / 2).split(""),
@@ -13,10 +13,10 @@ const part1 = (parsedInput: string[]) => {
     prioritySum += items.indexOf(commonItem!);
   }
 
-  console.log("Part 1:", prioritySum);
+  return prioritySum;
 };
 
-const part2 = (parsedInput: string[]) => {
+const part2 = (parsedInput: string[]): number => {
   let prioritySum = 0;
   for (let i = 0; i < parsedInput.length; i += 3) {
     const badgeItem = [...parsedInput[i]].find(
@@ -26,12 +26,11 @@ const part2 = (parsedInput: string[]) => {
     prioritySum += items.indexOf(badgeItem!);
   }
 
-  console.log("Part 2:", prioritySum);
+  return prioritySum;
 };
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, number] {
   const parsedInput = rawInput.split("\n");
 
-  part1(parsedInput);
-  part2(parsedInput);
+  return [part1(parsedInput), part2(parsedInput)];
 }

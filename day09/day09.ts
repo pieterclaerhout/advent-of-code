@@ -47,19 +47,11 @@ const simulateRope = (
   return tailGrids;
 };
 
-const part1 = (parsedInput: StepsWithDirection[]) => {
-  const tailGrids = simulateRope(parsedInput, 1);
-  console.log("Part 1:", tailGrids.size);
-};
-
-const part2 = (parsedInput: StepsWithDirection[]) => {
-  const tailGrids = simulateRope(parsedInput, 9);
-  console.log("Part 2:", tailGrids.size);
-};
-
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, number] {
   const parsedInput = parseInput(rawInput);
 
-  part1(parsedInput);
-  part2(parsedInput);
+  return [
+    simulateRope(parsedInput, 1).size,
+    simulateRope(parsedInput, 9).size,
+  ];
 }

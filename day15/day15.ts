@@ -12,7 +12,7 @@ const parseInput = (rawInput: string) =>
       };
     });
 
-const part1 = (rawInput: string) => {
+const part1 = (rawInput: string): number => {
   const input = parseInput(rawInput);
   const targetRow = input.length < 30 ? 10 : 2000000;
   const map: Map<number, Map<number, "S" | "B" | "#">> = new Map();
@@ -46,10 +46,10 @@ const part1 = (rawInput: string) => {
     if (value === "#") freeSpaces++;
   }
 
-  console.log("Part 1:", freeSpaces);
+  return freeSpaces;
 };
 
-const part2 = (rawInput: string) => {
+const part2 = (rawInput: string): number => {
   const input = parseInput(rawInput);
   const maxCoord = input.length < 30 ? 20 : 4000000;
 
@@ -98,18 +98,16 @@ const part2 = (rawInput: string) => {
           }
         }
         if (valid) {
-          const result = (check.x * 4000000 + check.y).toString();
-          console.log("Part 2:", result);
-          return;
+          return (check.x * 4000000 + check.y);
         }
       }
       check.x += dir.x;
       check.y += dir.y;
     }
   }
+  return 0;
 };
 
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }

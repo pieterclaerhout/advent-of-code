@@ -31,7 +31,8 @@ const calculateScore = (rawInput: string, scores: ScoreMap): number => {
     .reduce((a, c) => a + c);
 };
 
-export default function (rawInput: string) {
-  console.log("Part 1:", calculateScore(rawInput, scoresPart1));
-  console.log("Part 2:", calculateScore(rawInput, scoresPart2));
+export default function (rawInput: string): [number, number] {
+  const result1 = calculateScore(rawInput, scoresPart1);
+  const result2 = calculateScore(rawInput, scoresPart2);
+  return [result1, result2];
 }

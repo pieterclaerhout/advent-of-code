@@ -113,7 +113,7 @@ function constructPath(
   return path;
 }
 
-const part1 = (rawInput: string) => {
+const part1 = (rawInput: string): number => {
   const input = parseInput(rawInput);
 
   let start: [number, number] | null = null;
@@ -127,15 +127,14 @@ const part1 = (rawInput: string) => {
         end = [x, y];
       }
       if (start && end) {
-        const result = findPath(input, ...start, ...end).length.toString();
-        console.log("Part 1:", result);
-        return;
+        return findPath(input, ...start, ...end).length;
       }
     }
   }
+  return 0;
 };
 
-const part2 = (rawInput: string) => {
+const part2 = (rawInput: string): number => {
   const input = parseInput(rawInput);
 
   let end: [number, number] | null = null;
@@ -166,10 +165,9 @@ const part2 = (rawInput: string) => {
     }
   }
 
-  console.log("Part 2:", shortestPath);
+  return shortestPath;
 };
 
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }

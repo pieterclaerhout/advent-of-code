@@ -21,21 +21,18 @@ const isOverlapping = (pair: Pair): boolean => {
   return min[1] >= max[0];
 };
 
-const part1 = (parsedInput: Pair[]) => {
-  const result = parsedInput.filter(isContained).length;
-  console.log("Part 1:", result);
+const part1 = (parsedInput: Pair[]): number => {
+  return parsedInput.filter(isContained).length;
 };
 
-const part2 = (parsedInput: Pair[]) => {
-  const result = parsedInput.filter(isOverlapping).length;
-  console.log("Part 2:", result);
+const part2 = (parsedInput: Pair[]): number => {
+  return parsedInput.filter(isOverlapping).length;
 };
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, number] {
   const parsedInput = rawInput
     .split("\n")
     .map((v) => v.split(",").map((r) => r.split("-").map((s) => +s)) as Pair);
 
-  part1(parsedInput);
-  part2(parsedInput);
+  return [part1(parsedInput), part2(parsedInput)];
 }

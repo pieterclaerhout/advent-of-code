@@ -48,7 +48,7 @@ const part1 = (rawInput: string) => {
     }
   }
 
-  console.log("Part 1:", indexSum);
+  return indexSum;
 };
 
 const part2 = (rawInput: string) => {
@@ -64,15 +64,12 @@ const part2 = (rawInput: string) => {
   flatPackets.push(divider1, divider2);
   flatPackets.sort(compareValues);
 
-  const result = (
+  return (
     (flatPackets.indexOf(divider1) + 1) *
     (flatPackets.indexOf(divider2) + 1)
-  ).toString();
-
-  console.log("Part 2:", result);
+  );
 };
 
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }

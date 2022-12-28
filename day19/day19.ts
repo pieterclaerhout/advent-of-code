@@ -155,26 +155,21 @@ const dfs = (
   return max_geodes;
 };
 
-const part1 = (rawInput: string) => {
+const part1 = (rawInput: string): number => {
   const input = parseInput(rawInput);
-  const result = input.reduce(
+  return input.reduce(
     (acc, _, i) => acc + dfs(input, 24, i) * (i + 1),
     0,
   );
-
-  console.log("Part 1:", result);
 };
 
-const part2 = (rawInput: string) => {
+const part2 = (rawInput: string): number => {
   const input = parseInput(rawInput);
-  const result = input.slice(0, 3).reduce(
+  return input.slice(0, 3).reduce(
     (acc, _, i) => acc * dfs(input, 32, i),
     1,
   );
-
-  console.log("Part 2:", result);
 };
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }

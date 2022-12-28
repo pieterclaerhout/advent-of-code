@@ -88,17 +88,9 @@ const runMonkeyBusiness = (rawInput: string, rounds = FIRST_PART_ROUNDS) => {
     .reduce((a, b) => a * b, 1);
 };
 
-const part1 = (rawInput: string) => {
-  const result = runMonkeyBusiness(rawInput, FIRST_PART_ROUNDS);
-  console.log("Part 1:", result);
-};
-
-const part2 = (rawInput: string) => {
-  const result = runMonkeyBusiness(rawInput, SECOND_PART_ROUNDS);
-  console.log("Part 2:", result);
-};
-
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [
+    runMonkeyBusiness(rawInput, FIRST_PART_ROUNDS),
+    runMonkeyBusiness(rawInput, SECOND_PART_ROUNDS),
+  ];
 }

@@ -19,7 +19,9 @@ const runDay = async (day: string): Promise<void> => {
     .trimEnd()
     .replaceAll(/\r?\n/g, "\n");
 
-  command(rawIput);
+  const [result1, result2] = command(rawIput);
+  console.log("Part 1: " + result1);
+  console.log("Part 2: " + result2);
 };
 
 if (import.meta.main) {

@@ -37,7 +37,7 @@ const part1 = (rawInput: string) => {
     }
   }
 
-  console.log("Part 1:", surfaceArea);
+  return surfaceArea;
 };
 
 const part2 = (rawInput: string) => {
@@ -125,10 +125,9 @@ const part2 = (rawInput: string) => {
     }
   }
 
-  console.log("Part 2:", surfaceArea);
+  return surfaceArea;
 };
 
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }

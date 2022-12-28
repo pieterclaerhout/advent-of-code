@@ -9,12 +9,11 @@ const parseInput = (rawInput: string): number[] => {
     .sort((a, b) => b - a);
 };
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, number] {
   const caloriesPerElf = parseInput(rawInput);
 
   const highest = caloriesPerElf[0];
-  console.log("Part 1:", highest);
-
   const top3 = caloriesPerElf.slice(0, 3).reduce((p, c) => p + c);
-  console.log("Part 2:", top3);
+
+  return [highest, top3];
 }

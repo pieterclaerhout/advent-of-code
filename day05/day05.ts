@@ -1,4 +1,4 @@
-const part1 = (parsedInput: string[][]) => {
+const part1 = (parsedInput: string[][]): string => {
   const [input, moves] = parsedInput;
 
   const stacks: string[][] = [];
@@ -28,12 +28,10 @@ const part1 = (parsedInput: string[][]) => {
     }
   });
 
-  const result = stacks.map((s) => s.pop()).join("");
-
-  console.log("Part 1:", result);
+  return stacks.map((s) => s.pop()).join("");
 };
 
-const part2 = (parsedInput: string[][]) => {
+const part2 = (parsedInput: string[][]): string => {
   const [input, moves] = parsedInput;
 
   const stacks: string[][] = [];
@@ -65,16 +63,13 @@ const part2 = (parsedInput: string[][]) => {
     moving.reverse().forEach((m) => stacks[to - 1].push(m));
   });
 
-  const result = stacks.map((s) => s.pop()).join("");
-
-  console.log("Part 2:", result);
+  return stacks.map((s) => s.pop()).join("");
 };
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [string, string] {
   const parsedInput = rawInput
     .split("\n\n")
     .map((p) => p.split("\n"));
 
-  part1(parsedInput);
-  part2(parsedInput);
+  return [part1(parsedInput), part2(parsedInput)];
 }

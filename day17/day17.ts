@@ -85,7 +85,7 @@ const part1 = (rawInput: string) => {
     }
   }
 
-  console.log("Part 1:", highestPoint);
+  return highestPoint;
 };
 
 const part2 = (rawInput: string) => {
@@ -144,10 +144,8 @@ const part2 = (rawInput: string) => {
     }
   }
 
-  const result = (highestPoint + skippedHeight);
-  console.log("Part 2:", result);
+  return (highestPoint + skippedHeight);
 };
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }

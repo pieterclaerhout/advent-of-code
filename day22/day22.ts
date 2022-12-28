@@ -1,4 +1,4 @@
-const part1 = (rawInput: string): void => {
+const part1 = (rawInput: string): number => {
   type Player = {
     pos: number[];
     direction: number;
@@ -142,10 +142,10 @@ const part1 = (rawInput: string): void => {
     4 * (finalPlayer.pos[1] + 1) +
     finalPlayer.direction;
 
-  console.log("Part 1:", answer);
+  return answer;
 };
 
-const part2 = (rawInput: string): void => {
+const part2 = (rawInput: string): number => {
   type Location = {
     face: number;
     pos: number[];
@@ -452,9 +452,8 @@ const part2 = (rawInput: string): void => {
   const answer = 1000 * (finalPlayer.loc.pos[0] + 1 + currOffset[0]) +
     4 * (finalPlayer.loc.pos[1] + 1 + currOffset[1]) + finalPlayer.direction;
 
-  console.log("Part 2:", answer);
+  return answer;
 };
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }

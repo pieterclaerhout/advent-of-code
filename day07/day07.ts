@@ -35,18 +35,17 @@ const parseInput = (rawInput: string): Map<string, number> => {
   return dirSizeMap;
 };
 
-const part1 = (parsedInput: Map<string, number>) => {
+const part1 = (parsedInput: Map<string, number>): number => {
   let totalSizeOfDirsUnder100000 = 0;
   for (const [_path, dirSize] of parsedInput) {
     if (dirSize <= 100000) {
       totalSizeOfDirsUnder100000 += dirSize;
     }
   }
-
-  console.log("Part 1:", totalSizeOfDirsUnder100000);
+  return totalSizeOfDirsUnder100000;
 };
 
-const part2 = (parsedInput: Map<string, number>) => {
+const part2 = (parsedInput: Map<string, number>): number => {
   const needToFree = 30000000 - (70000000 - parsedInput.get("/")!);
 
   let closestSize = Infinity;
@@ -56,12 +55,11 @@ const part2 = (parsedInput: Map<string, number>) => {
     }
   }
 
-  console.log("Part 2:", closestSize);
+  return closestSize;
 };
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, number] {
   const parsedInput = parseInput(rawInput);
 
-  part1(parsedInput);
-  part2(parsedInput);
+  return [part1(parsedInput), part2(parsedInput)];
 }

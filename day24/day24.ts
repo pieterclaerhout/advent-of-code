@@ -172,13 +172,12 @@ class Grid {
   };
 }
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, number] {
   const grid = new Grid(rawInput.split("\n"));
 
   const part1 = grid.minutesGo();
   grid.minutesReturn();
   const part2 = grid.minutesGo();
 
-  console.log("Part 1:", part1);
-  console.log("Part 2:", part2);
+  return [part1, part2];
 }

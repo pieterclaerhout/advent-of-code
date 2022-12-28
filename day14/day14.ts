@@ -34,7 +34,7 @@ const buildMap = (lines: [number, number][][]) => {
   return map;
 };
 
-const simulateSand = (map: ("X" | "S")[][], ground?: number) => {
+const simulateSand = (map: ("X" | "S")[][], ground?: number): number => {
   let restingSand = 0;
   while (true) {
     const sand = [500, 0];
@@ -52,7 +52,7 @@ const simulateSand = (map: ("X" | "S")[][], ground?: number) => {
       if (!down) {
         sand[1]++;
         if (sand[1] > map.length) {
-          return restingSand.toString();
+          return restingSand;
         }
         continue;
       }
@@ -70,7 +70,7 @@ const simulateSand = (map: ("X" | "S")[][], ground?: number) => {
       }
       restingSand++;
       if (sand[0] === 500 && sand[1] === 0) {
-        return restingSand.toString();
+        return restingSand;
       }
       if (!map[sand[1]]) {
         map[sand[1]] = [];
@@ -81,23 +81,19 @@ const simulateSand = (map: ("X" | "S")[][], ground?: number) => {
   }
 };
 
-const part1 = (rawInput: string) => {
+const part1 = (rawInput: string): number => {
   const input = parseInput(rawInput);
   const map = buildMap(input);
-  const result = simulateSand(map);
-
-  console.log("Part 1:", result);
+  return simulateSand(map);
 };
 
-const part2 = (rawInput: string) => {
+const part2 = (rawInput: string): number => {
   const input = parseInput(rawInput);
   const map = buildMap(input);
   const groundY = map.length + 1;
-  const result = simulateSand(map, groundY);
-
-  console.log("Part 2:", result);
+  return simulateSand(map, groundY);
 };
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }

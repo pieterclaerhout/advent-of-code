@@ -4,7 +4,7 @@ const parseInput = (rawInput: string): number[][] => {
     .map((v) => v.split("").map((h) => +h));
 };
 
-const part1 = (parsedInput: number[][]) => {
+const part1 = (parsedInput: number[][]): number => {
   const visible: Set<string> = new Set();
 
   const testVisibility = (
@@ -40,10 +40,10 @@ const part1 = (parsedInput: number[][]) => {
     testVisibility(x, parsedInput.length - 1, 0, -1);
   }
 
-  console.log("Part 1:", visible.size);
+  return visible.size;
 };
 
-const part2 = (parsedInput: number[][]) => {
+const part2 = (parsedInput: number[][]): number => {
   const getVisibility = (
     startX: number,
     startY: number,
@@ -85,12 +85,11 @@ const part2 = (parsedInput: number[][]) => {
     }
   }
 
-  console.log("Part 2:", bestVisibilityScore);
+  return bestVisibilityScore;
 };
 
-export default function (rawInput: string) {
+export default function (rawInput: string): [number, number] {
   const parsedInput = parseInput(rawInput);
 
-  part1(parsedInput);
-  part2(parsedInput);
+  return [part1(parsedInput), part2(parsedInput)];
 }

@@ -30,7 +30,9 @@ const decimalToSnafu = (sum: number): string => {
   return snafu;
 };
 
-export default function (rawInput: string) {
-  console.log("Part 1:", snafuToDecimal(rawInput));
-  console.log("Part 2:", decimalToSnafu(snafuToDecimal(rawInput)));
+export default function (rawInput: string): [number, string] {
+  return [
+    snafuToDecimal(rawInput),
+    decimalToSnafu(snafuToDecimal(rawInput)),
+  ];
 }

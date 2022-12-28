@@ -30,20 +30,15 @@ const getCoordinates = (mixed: NumberContainer[]): number => {
 const part1 = (rawInput: string) => {
   const input = parseInput(rawInput);
   const mixed = mix(input);
-  const result = getCoordinates(mixed);
-
-  console.log("Part 1:", result);
+  return getCoordinates(mixed);
 };
 
 const part2 = (rawInput: string) => {
   const input = parseInput(rawInput, 811589153);
   const mixed = mix(input, 10);
-  const result = getCoordinates(mixed);
-
-  console.log("Part 2:", result);
+  return getCoordinates(mixed);
 };
 
-export default function (rawInput: string) {
-  part1(rawInput);
-  part2(rawInput);
+export default function (rawInput: string): [number, number] {
+  return [part1(rawInput), part2(rawInput)];
 }
