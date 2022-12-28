@@ -11,7 +11,7 @@ const runDay = async (day: string): Promise<void> => {
   }
 
   const inputPath = new URL(
-    `./day${dayAsString}/input.txt`,
+    `../inputs/day${dayAsString}/input.txt`,
     import.meta.url,
   ).pathname;
 

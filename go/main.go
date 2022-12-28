@@ -92,7 +92,7 @@ func runDay(day int) {
 
 	command := commands[day-1]
 
-	inputPath := filepath.Join(fmt.Sprintf("day%02d", day), "input.txt")
+	inputPath := filepath.Join("..", "inputs", fmt.Sprintf("day%02d", day), "input.txt")
 	rawInput, err := os.ReadFile(inputPath)
 	if err != nil {
 		fmt.Println("Failed to read:", inputPath)
