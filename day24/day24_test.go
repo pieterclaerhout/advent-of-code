@@ -19,6 +19,6 @@ func Test_Command(t *testing.T) {
 	cmd := day24.Command{}
 	result1, result2 := cmd.Execute(input)
 
-	assert.Equal(t, 18, result1)
-	assert.Equal(t, 54, result2)
+	assert.Equal(t, 10, result1)
+	assert.Equal(t, 30, result2)
 }
