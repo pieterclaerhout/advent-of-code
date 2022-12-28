@@ -8,7 +8,7 @@ import (
 
 type Command struct{}
 
-func (c *Command) Execute(input string) (any, any) {
+func (cmd *Command) Execute(input string) (any, any) {
 	lines := strings.Split(input, "\n")
 	part1 := 0
 	for _, line := range lines {

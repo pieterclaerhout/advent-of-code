@@ -7,7 +7,7 @@ import (
 type Command struct{}
 
 func (cmd *Command) Execute(input string) (any, any) {
-	return PartOne(input), PartTwo(input)
+	return partOne(input), partTwo(input)
 }
 
 var shapes = [][][]int{
@@ -119,7 +119,7 @@ func Simulate(width int, dx int, dy int, jets string, cb func(i int, j int, stat
 	}
 }
 
-func PartOne(insn string) int {
+func partOne(insn string) int {
 	var ans int
 	Simulate(7, 2, 3, insn, func(i, j int, state state) bool {
 		if i == 2022 {
@@ -138,7 +138,7 @@ type memoRow struct {
 	height int
 }
 
-func PartTwo(insn string) int {
+func partTwo(insn string) int {
 	heights := make([]int, 0, 200)
 	var prefix, cycle memoRow
 

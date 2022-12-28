@@ -4,15 +4,14 @@ import (
 	"strings"
 )
 
-type Command struct {
-}
+type Command struct{}
 
-func (c *Command) Execute(input string) (any, any) {
+func (cmd *Command) Execute(input string) (any, any) {
 	lines := strings.Split(input, "\n")
-	return c.part1(lines), c.part2(lines)
+	return cmd.part1(lines), cmd.part2(lines)
 }
 
-func (c *Command) part1(lines []string) int {
+func (cmd *Command) part1(lines []string) int {
 	var prioritySum int
 
 	for _, line := range lines {
@@ -25,7 +24,7 @@ func (c *Command) part1(lines []string) int {
 	return prioritySum
 }
 
-func (c *Command) part2(lines []string) int {
+func (cmd *Command) part2(lines []string) int {
 	var prioritySum int
 
 	for i := 0; i < len(lines); i = i + 3 {

@@ -5,15 +5,14 @@ import (
 	"strings"
 )
 
-type Command struct {
+type Command struct{}
+
+func (cmd *Command) Execute(input string) (any, any) {
+	return cmd.part1(input), cmd.part2(input)
 }
 
-func (c *Command) Execute(input string) (any, any) {
-	return c.part1(input), c.part2(input)
-}
-
-func (c *Command) part1(input string) string {
-	stacks := c.parseStacks(input)
+func (cmd *Command) part1(input string) string {
+	stacks := cmd.parseStacks(input)
 
 	for _, line := range strings.Split(input, "\n") {
 		if strings.HasPrefix(line, "move") {
@@ -36,8 +35,8 @@ func (c *Command) part1(input string) string {
 	return result
 }
 
-func (c *Command) part2(input string) string {
-	stacks := c.parseStacks(input)
+func (cmd *Command) part2(input string) string {
+	stacks := cmd.parseStacks(input)
 
 	for _, line := range strings.Split(input, "\n") {
 		if strings.HasPrefix(line, "move") {
@@ -58,7 +57,7 @@ func (c *Command) part2(input string) string {
 	return result
 }
 
-func (c *Command) parseStacks(input string) []Stack {
+func (cmd *Command) parseStacks(input string) []Stack {
 	stacks := []Stack{}
 
 	parts := strings.Split(input, "\n\n")

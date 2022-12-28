@@ -7,8 +7,7 @@ import (
 	"unicode"
 )
 
-type Command struct {
-}
+type Command struct{}
 
 func (cmd *Command) Execute(input string) (any, any) {
 	return cmd.part1(input), cmd.part2(input)

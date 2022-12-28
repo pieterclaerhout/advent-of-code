@@ -5,8 +5,7 @@ import (
 	"strings"
 )
 
-type Command struct {
-}
+type Command struct{}
 
 func (cmd *Command) Execute(input string) (any, any) {
 

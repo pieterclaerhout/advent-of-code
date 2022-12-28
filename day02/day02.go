@@ -4,14 +4,13 @@ import (
 	"strings"
 )
 
-type Command struct {
+type Command struct{}
+
+func (cmd *Command) Execute(input string) (any, any) {
+	return cmd.calculateScore(input, cmd.scoresPart1()), cmd.calculateScore(input, cmd.scoresPart2())
 }
 
-func (c *Command) Execute(input string) (any, any) {
-	return c.calculateScore(input, c.scoresPart1()), c.calculateScore(input, c.scoresPart2())
-}
-
-func (c *Command) scoresPart1() map[string]int {
+func (cmd *Command) scoresPart1() map[string]int {
 	return map[string]int{
 		"B X": 1,
 		"C Y": 2,
@@ -25,7 +24,7 @@ func (c *Command) scoresPart1() map[string]int {
 	}
 }
 
-func (c *Command) scoresPart2() map[string]int {
+func (cmd *Command) scoresPart2() map[string]int {
 	return map[string]int{
 		"B X": 1,
 		"C X": 2,
@@ -39,7 +38,7 @@ func (c *Command) scoresPart2() map[string]int {
 	}
 }
 
-func (c *Command) calculateScore(input string, scores map[string]int) int {
+func (cmd *Command) calculateScore(input string, scores map[string]int) int {
 	var totalScore int
 	for _, round := range strings.Split(input, "\n") {
 		if score, ok := scores[round]; ok {

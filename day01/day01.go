@@ -6,19 +6,18 @@ import (
 	"strings"
 )
 
-type Command struct {
-}
+type Command struct{}
 
-func (c *Command) Execute(input string) (any, any) {
-	calories := c.parse((input))
+func (cmd *Command) Execute(input string) (any, any) {
+	calories := cmd.parse((input))
 
 	max := calories[0]
-	top3 := c.sum(calories, 3)
+	top3 := cmd.sum(calories, 3)
 
 	return max, top3
 }
 
-func (c *Command) parse(input string) []int {
+func (cmd *Command) parse(input string) []int {
 	result := []int{}
 
 	for _, chunk := range strings.Split(input, "\n\n") {
@@ -37,7 +36,7 @@ func (c *Command) parse(input string) []int {
 	return result
 }
 
-func (c *Command) sum(ints []int, count int) int {
+func (cmd *Command) sum(ints []int, count int) int {
 	sum := 0
 	for i := 0; i < len(ints) && i < count; i++ {
 		sum += ints[i]

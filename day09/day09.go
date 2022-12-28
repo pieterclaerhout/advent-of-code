@@ -7,10 +7,9 @@ import (
 	"strings"
 )
 
-type Command struct {
-}
+type Command struct{}
 
-func (c *Command) Execute(input string) (any, any) {
+func (cmd *Command) Execute(input string) (any, any) {
 	dirs := map[rune]image.Point{
 		'U': {0, -1},
 		'R': {1, 0},

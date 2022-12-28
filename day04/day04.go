@@ -18,16 +18,15 @@ func (r1 Range) Overlap(r2 Range) bool {
 	return r1.s <= r2.s && r1.e >= r2.s || r2.s <= r1.s && r2.e >= r1.s
 }
 
-type Command struct {
+type Command struct{}
+
+func (cmd *Command) Execute(input string) (any, any) {
+	ranges := cmd.parse(input)
+
+	return cmd.part1(ranges), cmd.part2(ranges)
 }
 
-func (c *Command) Execute(input string) (any, any) {
-	ranges := c.parse(input)
-
-	return c.part1(ranges), c.part2(ranges)
-}
-
-func (c *Command) part1(ranges [][]Range) int {
+func (cmd *Command) part1(ranges [][]Range) int {
 	var countOverlap int
 	for _, r := range ranges {
 		if r[0].Contains(r[1]) || r[1].Contains(r[0]) {
@@ -38,7 +37,7 @@ func (c *Command) part1(ranges [][]Range) int {
 	return countOverlap
 }
 
-func (c *Command) part2(ranges [][]Range) int {
+func (cmd *Command) part2(ranges [][]Range) int {
 	var countOverlap int
 	for _, r := range ranges {
 		if r[0].Overlap(r[1]) {
@@ -48,7 +47,7 @@ func (c *Command) part2(ranges [][]Range) int {
 	return countOverlap
 }
 
-func (c *Command) parse(input string) [][]Range {
+func (cmd *Command) parse(input string) [][]Range {
 	ranges := [][]Range{}
 
 	for _, line := range strings.Split(input, "\n") {

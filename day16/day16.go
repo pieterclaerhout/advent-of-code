@@ -12,7 +12,7 @@ func (cmd *Command) Execute(input string) (any, any) {
 	return cmd.part1(valves), cmd.part2(valves)
 }
 
-func (c *Command) part1(valves Valves) int {
+func (cmd *Command) part1(valves Valves) int {
 	nonEmpty := valves.NonEmpty()
 	distances := valves.ValvesDistances(nonEmpty)
 
@@ -26,7 +26,7 @@ func (c *Command) part1(valves Valves) int {
 	return cache.Dfs([]string{"AA"}, "")
 }
 
-func (c *Command) part2(valves Valves) int {
+func (cmd *Command) part2(valves Valves) int {
 	nonEmpty := valves.NonEmpty()
 	distances := valves.ValvesDistances(nonEmpty)
 
@@ -42,7 +42,7 @@ func (c *Command) part2(valves Valves) int {
 	return cache.MaxExclusivePair()
 }
 
-func (c *Command) parse(input string) Valves {
+func (cmd *Command) parse(input string) Valves {
 	valves := Valves{
 		FlowRates:   map[string]int{},
 		Connections: map[string][]string{},
