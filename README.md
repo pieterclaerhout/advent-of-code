@@ -2,7 +2,7 @@
 
 ## Go Solutions
 
-- https://github.com/mnml/aoc/blob
+- https://github.com/mnml/aoc
 - https://github.com/shasderias/aoc-2022
 
 ## TypeScript solutions

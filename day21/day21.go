@@ -1,49 +1,53 @@
 package day21
 
 import (
-	"bufio"
-	_ "embed"
+	"sort"
+	"strconv"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
+type Command struct{}
 
-type Command struct {
-}
+func (cmd *Command) Execute(input string) (any, any) {
+	monkeys := map[string]string{}
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
-}
-
-func (c *Command) part1() {
-	monkeys := c.parse()
-	result := monkeys.Solve("root")
-	slog.Info("Part 1", slog.Any("result", result))
-}
-
-func (c *Command) part2() {
-	monkeys := c.parse()
-	result := monkeys.RootEquality()
-
-	slog.Info("Part 2", slog.Any("result", result))
-}
-
-func (c *Command) parse() Monkeys {
-	monkeys := Monkeys{}
-
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		lineParts := strings.Split(sc.Text(), ": ")
-		if len(lineParts) == 2 {
-			monkeys[lineParts[0]] = lineParts[1]
-		}
+	for _, s := range strings.Split(input, "\n") {
+		s := strings.Split(s, ": ")
+		monkeys[s[0]] = s[1]
 	}
 
-	return monkeys
+	part1 := cmd.solve(monkeys, "root")
+
+	monkeys["humn"] = "0"
+	s := strings.Fields(monkeys["root"])
+	if cmd.solve(monkeys, s[0]) < cmd.solve(monkeys, s[2]) {
+		s[0], s[2] = s[2], s[0]
+	}
+
+	part2, _ := sort.Find(1e16, func(v int) int {
+		monkeys["humn"] = strconv.Itoa(v)
+		return cmd.solve(monkeys, s[0]) - cmd.solve(monkeys, s[2])
+	})
+
+	return part1, part2
+}
+
+func (cmd *Command) solve(monkeys map[string]string, expr string) int {
+	if v, err := strconv.Atoi(monkeys[expr]); err == nil {
+		return v
+	}
+
+	mapping := map[string]func(int, int) int{
+		"+": func(a, b int) int { return a + b },
+		"-": func(a, b int) int { return a - b },
+		"*": func(a, b int) int { return a * b },
+		"/": func(a, b int) int { return a / b },
+	}
+
+	s := strings.Fields(monkeys[expr])
+	left := s[0]
+	oper := s[1]
+	right := s[2]
+
+	return mapping[oper](cmd.solve(monkeys, left), cmd.solve(monkeys, right))
 }
