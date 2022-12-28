@@ -1,48 +1,45 @@
 package day22
 
 import (
-	"bufio"
 	_ "embed"
 	"strings"
 
 	"github.com/pieterclaerhout/advent-of-code/day22/part1"
 	"github.com/pieterclaerhout/advent-of-code/day22/part2"
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
+// //go:embed input.txt
+// var input string
 
 type Command struct {
 }
 
-func (c *Command) Execute() {
-	c.part1()
-	c.part2()
+func (cmd *Command) Execute(input string) (any, any) {
+
+	parsed := strings.Split(input, "\n")
+
+	return part1.Solve(parsed), part2.Solve(parsed)
 }
 
-func (c *Command) part1() {
-	parsed := c.parse()
-	result := part1.Solve(parsed)
-	slog.Info("Part 1", slog.Any("result", result))
-}
+// func (c *Command) part1() {
+// 	parsed := c.parse()
+// 	result := part1.Solve(parsed)
+// 	slog.Info("Part 1", slog.Any("result", result))
+// }
 
-func (c *Command) part2() {
-	parsed := c.parse()
-	result := part2.Solve(parsed)
-	slog.Info("Part 2", slog.Any("result", result))
-}
+// func (c *Command) part2() {
+// 	parsed := c.parse()
+// 	result := part2.Solve(parsed)
+// 	slog.Info("Part 2", slog.Any("result", result))
+// }
 
-func (c *Command) parse() []string {
-	lines := []string{}
+// func (c *Command) parse(input string) []string {
+// 	lines := []string{}
 
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
+// 	for _, line := range strings.Split(input, "\n") {
+// 		lines = append(lines, line)
+// 	}
 
-	for sc.Scan() {
-		lines = append(lines, sc.Text())
-	}
+// 	return lines
 
-	return lines
-
-}
+// }
