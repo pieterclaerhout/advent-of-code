@@ -1,22 +1,14 @@
 package day24
 
 import (
-	"bufio"
-	_ "embed"
 	"strings"
-
-	"golang.org/x/exp/slog"
 )
 
-//go:embed input.txt
-var input string
+type Command struct{}
 
-type Command struct {
-}
+func (cmd *Command) Execute(input string) (any, any) {
 
-func (c *Command) Execute() {
-
-	lines := c.parse()
+	lines := strings.Split(input, "\n")
 
 	state := newState()
 	state.valley[0] = make([][]BlizzardSet, len(lines))
@@ -37,26 +29,11 @@ func (c *Command) Execute() {
 	goal := Pair{26, 120}
 	t1 := state.solve(start, goal)
 
-	slog.Info("Part 1", slog.Any("result", t1))
-
 	start, goal = SpaceTime{t1, goal.i, goal.j}, Pair{start.i, start.j}
 	t2 := state.solve(start, goal)
 
 	start, goal = SpaceTime{t2, goal.i, goal.j}, Pair{start.i, start.j}
 	t3 := state.solve(start, goal)
 
-	slog.Info("Part 1", slog.Any("result", t3))
-}
-
-func (c *Command) parse() []string {
-	lines := []string{}
-
-	reader := strings.NewReader(input)
-	sc := bufio.NewScanner(reader)
-
-	for sc.Scan() {
-		lines = append(lines, sc.Text())
-	}
-
-	return lines
+	return t1, t3
 }
