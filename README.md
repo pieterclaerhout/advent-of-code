@@ -12,3 +12,4 @@
 ## More Info
 
 - https://adventofcode.com/2022
+- https://andrealeopardi.com/posts/advent-of-code-2022/
