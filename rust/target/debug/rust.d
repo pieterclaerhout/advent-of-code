@@ -1,1 +1,0 @@
-/Users/pclaerhout/Documents/JonoFotografie/advent-of-code/rust/target/debug/rust: /Users/pclaerhout/Documents/JonoFotografie/advent-of-code/rust/src/day01.rs /Users/pclaerhout/Documents/JonoFotografie/advent-of-code/rust/src/main.rs
