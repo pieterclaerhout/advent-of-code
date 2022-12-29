@@ -1,7 +1,24 @@
 use std::env;
+use std::fmt;
 use std::fs;
 
 mod day01;
+mod day25;
+
+#[derive(Debug)]
+pub enum Solution {
+    String(String),
+    Int64(i64),
+}
+
+impl fmt::Display for Solution {
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Solution::String(s) => write!(fmt, "{}", s),
+            Solution::Int64(s) => write!(fmt, "{}", s),
+        }
+    }
+}
 
 fn main() {
     let day_arg = env::args().nth(1);
@@ -28,11 +45,12 @@ fn run_day(day: u32) {
 
     let (result1, result2) = match day {
         1 => day01::run(input.as_str()),
-        _ => (0, 0),
+        25 => day25::run(input.as_str()),
+        _ => unreachable!(),
     };
 
-    println!("Day 1: {0}", result1);
-    println!("Day 2: {0}", result2);
+    println!("Day 1: {result1}");
+    println!("Day 2: {result2}");
     println!();
 }
 
