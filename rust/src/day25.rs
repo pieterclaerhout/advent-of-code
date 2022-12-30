@@ -1,48 +1,90 @@
 use super::Solution;
 
-pub fn run(input: &str) -> (Solution, Solution) {
-    let result1 = to_dec(input);
-    let result2 = to_snafu(result1);
+type Input<'a> = Vec<&'a [u8]>;
 
-    return (Solution::Int64(result1), Solution::String(result2));
+pub fn run(input: &str) -> (Solution, Solution) {
+    let parsed_input = parse(input);
+
+    let sum = part1(&parsed_input);
+    let snafu = part2(sum);
+
+    return (Solution::Int64(sum), Solution::String(snafu));
 }
 
-fn to_dec(input: &str) -> i64 {
+fn parse(input: &str) -> Input {
+    input.lines().map(str::as_bytes).collect()
+}
+
+fn part1(input: &Input) -> i64 {
     return input
-        .lines()
-        .map(|l| {
-            l.as_bytes().iter().fold(0, |value, &digit| {
-                5 * value
-                    + match digit {
-                        b'2' => 2,
-                        b'1' => 1,
+        .iter()
+        .map(|&line| {
+            let mut acc = 0i64;
+            for &b in line {
+                acc = acc * 5
+                    + match b {
                         b'0' => 0,
+                        b'1' => 1,
+                        b'2' => 2,
                         b'-' => -1,
                         b'=' => -2,
-                        _ => unreachable!(),
+                        _ => panic!("Invalid input"),
                     }
-            })
+            }
+            acc as i64
         })
         .sum::<i64>();
 }
 
-fn to_snafu(sum: i64) -> String {
-    let mut digits = Vec::new();
-    let mut sum = sum.clone();
-    while sum != 0 {
-        let v = sum % 5;
-        sum /= 5;
-        if v > 2 {
-            sum += 1;
-        }
-        digits.push(match v {
-            3 => '=',
-            4 => '-',
-            0 => '0',
-            1 => '1',
-            2 => '2',
+fn part2(mut n: i64) -> String {
+    let mut out = Vec::new();
+    while n != 0 {
+        let (carry, character) = match n % 5 {
+            0 => (0, '0'),
+            1 => (0, '1'),
+            2 => (0, '2'),
+            3 => (1, '='),
+            4 => (1, '-'),
             _ => unreachable!(),
-        });
+        };
+        n = n / 5 + carry;
+        out.push(character);
     }
-    return digits.iter().rev().collect();
+    return out.into_iter().rev().collect();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part1() {
+        let parsed_input = parse(test_input());
+        let result = part1(&parsed_input);
+        assert_eq!(result, 4890);
+    }
+
+    #[test]
+    fn test_part2() {
+        let parsed_input = parse(test_input());
+        let sum = part1(&parsed_input);
+        let result = part2(sum);
+        assert_eq!(result, "2=-1=0");
+    }
+
+    fn test_input() -> &'static str {
+        return "1=-0-2
+12111
+2=0=
+21
+2=01
+111
+20012
+112
+1=-1=
+1-12
+12
+1=
+122";
+    }
 }

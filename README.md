@@ -9,6 +9,10 @@
 
 - https://github.com/ransoing/AoC22
 
+## Rust
+
+- https://github.com/SkiFire13/adventofcode-2022-rs
+
 ## More Info
 
 - https://adventofcode.com/2022

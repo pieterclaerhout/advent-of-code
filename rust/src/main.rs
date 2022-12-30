@@ -9,6 +9,7 @@ mod day25;
 pub enum Solution {
     String(String),
     Int64(i64),
+    Usize(usize),
 }
 
 impl fmt::Display for Solution {
@@ -16,6 +17,7 @@ impl fmt::Display for Solution {
         match self {
             Solution::String(s) => write!(fmt, "{}", s),
             Solution::Int64(s) => write!(fmt, "{}", s),
+            Solution::Usize(s) => write!(fmt, "{}", s),
         }
     }
 }
