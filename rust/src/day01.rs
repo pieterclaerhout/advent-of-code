@@ -32,16 +32,12 @@ fn part1(input: &Input) -> usize {
 }
 
 fn part2(input: &Input) -> usize {
-    let mut sorted_asc = input
+    return input
         .iter()
+        .rev()
+        .take(3)
         .map(|elf| elf.iter().sum::<usize>())
-        .collect::<Vec<usize>>();
-
-    sorted_asc.sort_unstable();
-    sorted_asc.reverse();
-    sorted_asc.truncate(3);
-
-    return sorted_asc.iter().sum();
+        .sum::<usize>();
 }
 
 #[cfg(test)]
