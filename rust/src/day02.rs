@@ -1,6 +1,6 @@
 use super::Solution;
 
-type Input = Vec<Vec<usize>>;
+type Input = Vec<(usize, usize)>;
 
 pub fn run(input: &str) -> (Solution, Solution) {
     let parsed_input = parse(input);
@@ -13,31 +13,35 @@ pub fn run(input: &str) -> (Solution, Solution) {
 
 fn parse(input: &str) -> Input {
     return input
-        .split("\n\n")
-        .map(|lines| {
-            lines
-                .lines()
-                .map(|line| line.parse().expect("Invalid input"))
-                .collect()
-        })
+        .lines()
+        .map(str::as_bytes)
+        .map(|line| ((line[0] - b'A') as usize, (line[2] - b'X') as usize))
         .collect();
 }
 
 fn part1(input: &Input) -> usize {
     return input
         .iter()
-        .map(|elf| elf.iter().sum::<usize>())
-        .max()
-        .expect("Invalid input");
+        .copied()
+        .map(|(a, x)| {
+            let move_score = x + 1;
+            let game_result = (3 + x - a + 1) % 3;
+            move_score + 3 * game_result
+        })
+        .sum();
 }
 
 fn part2(input: &Input) -> usize {
     return input
         .iter()
-        .rev()
-        .take(3)
-        .map(|elf| elf.iter().sum::<usize>())
-        .sum::<usize>();
+        .copied()
+        .map(|(a, x)| {
+            let move_to_play = (a + x + 3 - 1) % 3;
+            let move_score = move_to_play + 1;
+            let game_result = x;
+            game_result * 3 + move_score
+        })
+        .sum();
 }
 
 #[cfg(test)]
@@ -48,30 +52,19 @@ mod tests {
     fn test_part1() {
         let parsed_input = parse(test_input());
         let result = part1(&parsed_input);
-        assert_eq!(result, 24000);
+        assert_eq!(result, 15);
     }
 
     #[test]
     fn test_part2() {
         let parsed_input = parse(test_input());
         let result = part2(&parsed_input);
-        assert_eq!(result, 45000);
+        assert_eq!(result, 12);
     }
 
     fn test_input() -> &'static str {
-        return "1000
-2000
-3000
-
-4000
-
-5000
-6000
-
-7000
-8000
-9000
-
-10000";
+        return "A Y
+B X
+C Z";
     }
 }

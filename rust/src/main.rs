@@ -3,6 +3,10 @@ use std::fmt;
 use std::fs;
 
 mod day01;
+mod day02;
+mod day03;
+mod day04;
+mod day05;
 mod day25;
 
 #[derive(Debug)]
@@ -47,6 +51,10 @@ fn run_day(day: u32) {
 
     let (result1, result2) = match day {
         1 => day01::run(input.as_str()),
+        2 => day02::run(input.as_str()),
+        3 => day03::run(input.as_str()),
+        4 => day04::run(input.as_str()),
+        5 => day05::run(input.as_str()),
         25 => day25::run(input.as_str()),
         _ => unreachable!(),
     };
