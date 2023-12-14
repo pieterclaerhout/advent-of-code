@@ -1,11 +1,11 @@
 repo_name: pieterclaerhout/advent-of-code
-report_id: 07e29f1ac3c715bd852a7a080f2cd742
+report_id: 3278f34042ce21b9beeaf863eec5e67c
 repo_type: Public
-timestamp: '2023-11-09T11:21:08+00:00'
+timestamp: '2023-12-14T09:23:37+00:00'
 requested_by: pieterclaerhout
 provider: github
 branch: main
-detected_tools_count: 5
+detected_tools_count: 11
 tools:
 - name: Golang
   description: An open source programming language that makes it easy to build simple,
@@ -37,6 +37,17 @@ tools:
   sub_category: Languages
   image_url: https://img.stackshare.io/service/1612/bynNY5dJ.jpg
   detection_source: Repo Metadata
+- name: pgvector
+  description: Open-source vector similarity search for Postgres
+  website_url: https://github.com/pgvector/pgvector/
+  open_source: false
+  hosted_saas: false
+  category: Data Stores
+  sub_category: Database Tools
+  image_url: https://img.stackshare.io/service/109221/default_b888cdf5617d936aa6aacf130911906955508639.png
+  detection_source: inputs/day01/input.txt
+  last_updated_by: Pieter Claerhout
+  last_updated_on: 2022-12-28 15:27:27.000000000 Z
 - name: Git
   description: Fast, scalable, distributed revision control system
   website_url: http://git-scm.com/
@@ -59,3 +70,69 @@ tools:
   detection_source: go/go.mod
   last_updated_by: Pieter Claerhout
   last_updated_on: 2022-12-19 10:01:15.000000000 Z
+- name: LangChain
+  description: Build AI apps with LLMs through composability
+  website_url: https://github.com/hwchase17/langchain
+  open_source: true
+  hosted_saas: false
+  category: Communications
+  sub_category: Large Language Model Tools
+  image_url: https://img.stackshare.io/service/48790/default_5b6c6b73f1ff3775c85d2a1ba954cb87e30cbf13.jpg
+  detection_source: inputs/day01/input.txt
+  last_updated_by: Pieter Claerhout
+  last_updated_on: 2022-12-28 15:27:27.000000000 Z
+- name: check.v1
+  description: Package check is a rich testing extension for Go's testing package
+  package_url: https://pkg.go.dev/gopkg.in/check.v1
+  version: 0.0.0
+  open_source: false
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/pieterclaerhout/advent-of-code/blob/main/go/go.sum
+  detection_source: go/go.mod
+  last_updated_by: Pieter Claerhout
+  last_updated_on: 2022-12-19 12:57:27.000000000 Z
+- name: go-difflib
+  description: Partial port of Python difflib package to Go
+  package_url: https://pkg.go.dev/github.com/pmezard/go-difflib
+  version: 1.0.0
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/pieterclaerhout/advent-of-code/blob/main/go/go.sum
+  detection_source: go/go.mod
+  last_updated_by: Pieter Claerhout
+  last_updated_on: 2022-12-19 10:01:15.000000000 Z
+- name: go-spew
+  description: Implements a deep pretty printer for Go data structures to aid in debugging
+  package_url: https://pkg.go.dev/github.com/davecgh/go-spew
+  version: 1.1.0
+  license: ISC
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/pieterclaerhout/advent-of-code/blob/main/go/go.sum
+  detection_source: go/go.mod
+  last_updated_by: Pieter Claerhout
+  last_updated_on: 2022-12-19 10:01:15.000000000 Z
+- name: pretty
+  description: Pretty printing for Go values
+  package_url: https://pkg.go.dev/github.com/kr/pretty
+  version: 0.2.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: Go Modules Packages
+  image_url: https://img.stackshare.io/package/go-packages/image.png
+  detection_source_url: https://github.com/pieterclaerhout/advent-of-code/blob/main/go/go.sum
+  detection_source: go/go.mod
+  last_updated_by: Pieter Claerhout
+  last_updated_on: 2022-12-19 12:57:27.000000000 Z
